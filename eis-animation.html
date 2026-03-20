@@ -150,16 +150,16 @@ canvas{display:block;width:100%;height:100%}
         <button class="pre-btn active" style="--pc:#fe0808" onclick="setPreset('wine',this)">赤ワイン</button>
       </div>
       <div class="sl-group">
-        <div class="sl-row"><div class="d" style="background:#4488ff"></div><label>カチオン</label><input type="range" id="slCat" min="20" max="300" value="120" oninput="onSlider()"><span class="sl-val" id="vCat">120</span></div>
+        <div class="sl-row"><div class="d" style="background:#4488ff"></div><label>カチオン</label><input type="range" id="slCat" min="5" max="500" value="75" oninput="onSlider()"><span class="sl-val" id="vCat">75</span></div>
         <div class="sl-desc">Na⁺, H⁺ — 電場方向にドリフト。<span id="bI">大きく移動し迂回。</span> イオン↑ → <strong>Rb↓</strong></div>
 
-        <div class="sl-row"><div class="d" style="background:#ff6655"></div><label>アニオン</label><input type="range" id="slAni" min="20" max="300" value="110" oninput="onSlider()"><span class="sl-val" id="vAni">110</span></div>
+        <div class="sl-row"><div class="d" style="background:#ff6655"></div><label>アニオン</label><input type="range" id="slAni" min="5" max="300" value="55" oninput="onSlider()"><span class="sl-val" id="vAni">55</span></div>
         <div class="sl-desc">Cl⁻ — カチオンと逆方向。イオン↑ → <strong>Rb↓</strong></div>
 
-        <div class="sl-row"><div class="d" style="background:#00d4aa"></div><label>自由水</label><input type="range" id="slWat" min="5" max="80" value="38" oninput="onSlider()"><span class="sl-val" id="vWat">38</span></div>
+        <div class="sl-row"><div class="d" style="background:#00d4aa"></div><label>自由水</label><input type="range" id="slWat" min="5" max="100" value="48" oninput="onSlider()"><span class="sl-val" id="vWat">48</span></div>
         <div class="sl-desc">H₂O — <span id="bWf">常に完全配向 (Debye ~17GHz)</span>。自由水↑ → <strong>Cb↑</strong></div>
 
-        <div class="sl-row"><div class="d" style="background:#ffcc00"></div><label>大型分子</label><input type="range" id="slLrg" min="0" max="12" value="10" oninput="onSlider()"><span class="sl-val" id="vLrg">10</span></div>
+        <div class="sl-row"><div class="d" style="background:#ffcc00"></div><label>大型分子</label><input type="range" id="slLrg" min="0" max="20" value="8" oninput="onSlider()"><span class="sl-val" id="vLrg">8</span></div>
         <div class="sl-desc">タンニン/グルコース等 — <span id="bL">高周波で追従不能</span>。大型分子↑ → <strong>Rb↑ Cb↓</strong></div>
 
         <div class="sl-extra">
@@ -729,7 +729,7 @@ function drawHydrationShells(){
 // Rb: more ions → lower (more charge carriers), more large mol → higher (obstruction)
 // Cb: more free water → higher (dielectric), more large mol → lower (bound water, ε↓)
 let Rb=210, Cb=500e-12;
-let nCat=120,nAni=110,nWat=38,nLrg=10;
+let nCat=75,nAni=55,nWat=48,nLrg=8;
 let currentPresetLabel='赤ワイン';
 
 function updateZModel(){
@@ -793,19 +793,19 @@ function onSlider(){
 // Maps particle counts to physical liquid properties
 // More ions → Rb↓, More large mol → Rb↑ Cb↓, More free water → Cb↑
 const PRESETS={
-  shoyu: {cat:300,ani:300,wat:15,lrg:10, Rb:15,  Cb:320e-12, label:'醤油',
+  shoyu: {cat:457,ani:266,wat:26,lrg:8, label:'醤油',
     molLabels:['メラノイジン','アミノ酸'],
     note:'NaCl ~16%でイオン極多。メラノイジン・アミノ酸が水を結合。'},
-  su:    {cat:80, ani:80, wat:55,lrg:2,  Rb:250, Cb:750e-12, label:'穀物酢',
+  su:    {cat:41, ani:60, wat:66,lrg:4, label:'穀物酢',
     molLabels:['酢酸二量体','有機酸'],
     note:'酢酸は弱酸（部分解離）。自由水が多くCb高め。大型分子は少。'},
-  mirin: {cat:40, ani:40, wat:18,lrg:12, Rb:1600,Cb:250e-12, label:'みりん',
+  mirin: {cat:13, ani:25, wat:27,lrg:14, label:'みりん',
     molLabels:['グルコース','マルトース'],
     note:'糖分~45%で大型分子が大量。イオン少。水はほとんど結合。'},
-  water: {cat:25, ani:25, wat:75,lrg:0,  Rb:2200,Cb:900e-12, label:'水道水',
+  water: {cat:9,  ani:13, wat:70,lrg:1, label:'水道水',
     molLabels:['',''],
     note:'ミネラル微量。大型分子ゼロ。ほぼ全て自由水。'},
-  wine:  {cat:120,ani:110,wat:38,lrg:10, Rb:210, Cb:500e-12, label:'赤ワイン',
+  wine:  {cat:75, ani:55, wat:48,lrg:8, label:'赤ワイン',
     molLabels:['タンニン','ポリフェノール'],
     note:'有機酸+ミネラルでイオン中程度。タンニン・ポリフェノール等が多い。'},
 };
@@ -826,12 +826,9 @@ function setPreset(key,btn){
   document.getElementById('vAni').textContent=nAni;
   document.getElementById('vWat').textContent=nWat;
   document.getElementById('vLrg').textContent=nLrg;
-  // Use preset's direct Rb/Cb values
-  Rb=p.Rb;Cb=p.Cb;
-  document.getElementById('zRb').textContent=Rb.toFixed(0)+' Ω';
-  document.getElementById('zCb').textContent=(Cb*1e12).toFixed(0)+' pF';
-  document.getElementById('svgRb').textContent='Rb='+Rb.toFixed(0)+'Ω';
-  document.getElementById('svgCb').textContent='Cb='+(Cb*1e12).toFixed(0)+'pF';
+  // Compute Rb/Cb from formula (same as manual slider adjustment)
+  updateZModel();
+  updText();
   recomputeFreqPts();
   init();
 }
