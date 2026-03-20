@@ -41,7 +41,7 @@ p b{color:var(--text);font-weight:700}
 /* ═══ ANIMATION STAGE ═══ */
 .anim-box{background:#0e1018;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:24px 0}
 .anim-label{padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--dim);font-weight:600;border-bottom:1px solid var(--border)}
-.anim-stage{height:280px;position:relative;overflow:hidden}
+.anim-stage{width:500px;height:280px;position:relative;overflow:hidden}
 .anim-cap{background:rgba(17,19,27,.9);padding:12px 18px;font-size:.88rem;color:var(--sub);line-height:1.7;border-top:1px solid var(--border)}
 .anim-cap b{color:var(--text)}
 
@@ -117,26 +117,30 @@ p b{color:var(--text);font-weight:700}
 
 /* ═══ Mobile animation scaling ═══ */
 @media(max-width:520px){
-  .anim-box{overflow:hidden}
   .anim-cap{font-size:.78rem;padding:10px 14px}
   .anim-label{font-size:.65rem;padding:8px 12px}
   .wrap{padding:24px 12px 60px}
 }</style>
 <script>
-// Dynamic scale for animation stages on narrow screens
+// Scale 500px-wide animation stages to fit screen
 function scaleAnimStages(){
   document.querySelectorAll('.anim-stage').forEach(function(s){
-    var w=s.parentElement.clientWidth||s.closest('.anim-box').clientWidth;
-    if(w<500){
+    var box=s.closest('.anim-box');
+    if(!box)return;
+    // anim-box width minus borders
+    var w=box.clientWidth;
+    if(w<498){
       var sc=w/500;
       s.style.transform='scale('+sc+')';
       s.style.transformOrigin='top left';
+      s.style.height='280px';
       s.style.marginBottom=(-280*(1-sc))+'px';
     }else{
-      s.style.transform='';s.style.marginBottom='';
+      s.style.transform='';s.style.marginBottom='';s.style.height='';
     }
   });
 }
+window.addEventListener('DOMContentLoaded',scaleAnimStages);
 window.addEventListener('load',scaleAnimStages);
 window.addEventListener('resize',scaleAnimStages);
 </script>
