@@ -153,7 +153,7 @@ window.addEventListener('resize',scaleAnimStages);
 <nav class="nav"><div class="nav-in">
   <h1><span>EIS</span> やさしい解説</h1>
   <div class="nav-tabs">
-    <a href="#s1">①粒の動き</a><a href="#s2">②水の向き</a><a href="#s3">③大きな分子</a><a href="#s4">④グラフで見る</a>
+    <a href="#s1">①粒の動き</a><a href="#s2">②水の向き</a><a href="#s3">③成分と水</a><a href="#s4">④グラフで見る</a>
     <a href="eis-tutorial.html">📚 詳しい解説</a><a href="eis-animation.html">▶ シミュレーション</a>
   </div>
 </div></nav>
@@ -314,12 +314,31 @@ window.addEventListener('resize',scaleAnimStages);
 <div class="sec-num">STEP 3</div>
 
 <div class="big-banner">
-  <h3>🧪 大きな分子が粒と水を「邪魔」する</h3>
-  <p>砂糖、ポリフェノール、アミノ酸——大きな分子が液体の「道」を変える</p>
+  <h3>🧪 成分が入ると、水のふるまいが変わる</h3>
+  <p>液体の違いは、成分そのものの量だけでなく、成分が水とどう関わるかに強く表れます</p>
 </div>
 
+<p><b>酸も糖もタンニンも、どれも水と関わりながら液体の電気的な応答を変えます。</b>ただし、その効き方は同じではありません。成分ごとに、どの影響が強く出やすいかが異なります。</p>
+
+<div class="acc acc-red" style="background:rgba(68,136,255,.06);border-color:rgba(68,136,255,.15)">
+<h4 style="color:var(--blue)">酸（クエン酸・酢酸など）</h4>
+<p>動ける粒としての影響が<b>比較的出やすい</b>。一部が電離してイオンになり、粒の動きに強く影響します。ただし、水との関わりやpHの変化にも効きます。</p>
+</div>
+
+<div class="acc acc-green">
+<h4 style="color:var(--green)">糖（ブドウ糖・砂糖など）</h4>
+<p>水のふるまいへの影響が<b>比較的大きい</b>。水酸基が多く水と強く関わるため、水の動き方や向きの変わりやすさを変えます。下のアニメーションがこの効果を示しています。</p>
+</div>
+
+<div class="acc acc-yellow">
+<h4 style="color:var(--yellow)">タンニン・ポリフェノールなど</h4>
+<p>さらに<b>複雑な形</b>で影響します。水や他の成分との関わり方が多岐にわたり、粒の道と水の道の両方に影響を与えます。</p>
+</div>
+
+<p>このように、<b>どの成分も水や粒の動き方に影響しますが、どの影響が強く出やすいかが成分ごとに違います</b>。この違いが、液体ごとの測定結果の差として現れます。</p>
+
 <div class="anim-box">
-<div class="anim-label" style="font-size:.85rem;padding:14px 18px;background:rgba(255,204,0,.05)">⬇ 大きな分子が粒の道を塞ぎ、まわりの水を動けなくする</div>
+<div class="anim-label" style="font-size:.85rem;padding:14px 18px;background:rgba(255,204,0,.05)">⬇ 成分（黄色）が水と結びつき、まわりの水を動けなくする。粒も遠回りを強いられる。</div>
 <div class="anim-stage" id="molStage">
   <div class="elec elec-l"><span class="elec-sign" id="signL3">＋</span></div>
   <div class="elec elec-r"><span class="elec-sign" id="signR3">−</span></div>
@@ -347,20 +366,20 @@ window.addEventListener('resize',scaleAnimStages);
   <div class="ion ani" id="di5" style="top:130px;left:445px">Cl⁻</div>
   <div class="ion ani" id="di6" style="top:230px;left:440px">Cl⁻</div>
 </div>
-<div class="anim-cap"><b>黄色い楕円＝大きな分子</b>。<b>粒（青＋赤）</b>は大きな分子を避けて<b>遠回り</b>。点線の影響圏内のコンパスは<b>針が動かない＝動けない水</b>。影響圏の外のコンパスは<b>電極の向きに合わせて向きが変わる＝動ける水</b>。</div>
+<div class="anim-cap"><b>黄色い楕円＝溶けている成分</b>（糖やタンニンなど）。成分と結びついた水（動けない水）は向きを変えられません。<b>粒（青＋赤）</b>は成分を避けて<b>遠回り</b>。成分から離れた水（動ける水）は自由に向きを変えます。</div>
 </div>
 
 <div class="analogy">
 <h4>たとえ話：重い荷物を持つ人たち</h4>
-<p>廊下を歩いている人たち（粒や水）がいます。ところが、<b>ものすごく重い荷物（大きな分子）を複数人（水）で持って立っている</b>グループがあちこちにいます。</p>
-<p>歩いている人（粒）はそのグループを避けて<b>遠回り</b>するしかありません。荷物を持っている人は<b>重すぎて向きを変えられない</b>。でも荷物を持っていない人は自由に動けます。</p>
-<p><b>荷物持ちグループ（大きな分子＋動けない水）が多いほど → 遠回りが増え、向きを変えられる水が減る</b></p>
+<p>廊下を歩いている人たち（粒や水）がいます。ところが、<b>ものすごく重い荷物（成分）を複数人（水）で持って立っている</b>グループがあちこちにいます。</p>
+<p>歩いている人（粒）はそのグループを避けて<b>遠回り</b>するしかありません。荷物を持っている人（成分と結びついた水）は<b>重すぎて向きを変えられない</b>。でも荷物を持っていない人は自由に動けます。</p>
+<p><b>荷物持ちグループが多いほど → 遠回りが増え、向きを変えられる水が減る</b></p>
 </div>
 
 <div class="acc acc-yellow">
 <h4>🔑 これが「液体の個性」の正体</h4>
-<p>甘さの素（砂糖やブドウ糖）、酸っぱさの素（クエン酸や酢酸）、渋みの素（タンニン）——<b>これらはすべて「大きな分子」です</b>。</p>
-<p>大きな分子の<b>種類と量</b>が変わると、「粒が移動する道の電流の流れやすさ」と「水が向きを変える道の電流の流れやすさ」の組み合わせが変わります。<b>同じくらい甘く、同じくらい酸っぱい液体でも、中に溶けている分子が違えばパターンが違う。</b>これが<b>液体ごとの個性</b>です。</p>
+<p><b>液体の違いは、成分そのものの量だけでなく、成分が水とどう関わるかに表れます。</b>どの成分も粒の動きと水のふるまいの両方に影響しますが、その重みづけが成分ごとに異なります。</p>
+<p>そのため、「粒が移動する道」と「水が向きを変える道」の組み合わせが液体ごとに変わります。<b>同じくらい甘く、同じくらい酸っぱい液体でも、中に溶けている成分が違えばパターンが違う。</b>これが<b>液体ごとの個性</b>です。</p>
 </div>
 </section>
 
@@ -374,7 +393,7 @@ window.addEventListener('resize',scaleAnimStages);
   <h4 style="color:var(--red)">道① 粒が移動する道<br><span style="font-size:.8em;color:var(--dim)">（専門用語では「抵抗 Rb」）</span></h4>
   <svg viewBox="0 0 120 40" style="width:120px;height:40px;display:block;margin:8px auto"><line x1="5" y1="20" x2="25" y2="20" stroke="#fe4444" stroke-width="2"/><polyline points="25,20 30,8 40,32 50,8 60,32 70,8 80,32 85,20" fill="none" stroke="#fe4444" stroke-width="2.5" stroke-linecap="round"/><line x1="85" y1="20" x2="115" y2="20" stroke="#fe4444" stroke-width="2"/></svg>
   <p>動ける粒が電流を運ぶ道</p>
-  <p>動ける粒が多い → <b>電流が流れやすい</b><br>大きな分子が邪魔 → <b>電流が流れにくい</b></p>
+  <p>動ける粒が多い → <b>電流が流れやすい</b><br>成分が粒の移動を妨げる → <b>電流が流れにくい</b></p>
 </div>
 <div style="border-color:rgba(0,212,170,.2)">
   <h4 style="color:var(--green)">道② 水が向きを変える道<br><span style="font-size:.8em;color:var(--dim)">（専門用語では「コンデンサ Cb」）</span></h4>

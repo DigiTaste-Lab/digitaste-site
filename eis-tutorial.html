@@ -62,7 +62,7 @@ p strong{color:var(--text);font-weight:600}
   <div class="hdr-nav">
     <a href="#ch1">1. イオン</a>
     <a href="#ch2">2. 自由水</a>
-    <a href="#ch3">3. 大型分子</a>
+    <a href="#ch3">3. 成分と水</a>
     <a href="#ch4">4. 等価回路</a>
     <a href="eis-beginner.html" style="margin-left:8px;background:rgba(255,180,0,.1);border-color:rgba(255,180,0,.3);color:#ffaa22">🔰 やさしい解説</a>
     <a href="eis-animation.html" class="sim-link">▶ シミュレーション</a>
@@ -71,14 +71,14 @@ p strong{color:var(--text);font-weight:600}
 <div class="wrap">
 
 <div style="text-align:center;padding:40px 0 32px">
-  <h2 style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;line-height:1.3;margin-bottom:12px;letter-spacing:-.02em">液体に電流を流すと<br><span style="color:var(--red)">液体の個性</span>が数値で見える</h2>
+  <h2 style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;line-height:1.3;margin-bottom:12px;letter-spacing:-.02em">液体にごく弱い電気をかけると<br><span style="color:var(--red)">液体の個性</span>が数値で見える</h2>
   <p style="font-size:1rem;color:var(--muted);max-width:560px;margin:0 auto">体脂肪計が体に弱い電流を流して脂肪と筋肉を見分けるように、DigiTasteは液体にごく弱い電流を流し、その戻り方の違いから液体を識別します。ここでは、その物理的なしくみを4章で解説します。</p>
 </div>
 
 <div class="toc">
   <a href="#ch1"><span class="toc-n">01</span>イオンの伝導電流 — 電荷が実際に移動する</a>
   <a href="#ch2"><span class="toc-n">02</span>自由水の変位電流 — 回転がコンデンサになる</a>
-  <a href="#ch3"><span class="toc-n">03</span>大型分子と結合水 — 液体の個性を生む</a>
+  <a href="#ch3"><span class="toc-n">03</span>溶けている成分と水の関わり — 液体の違いが生まれる理由</a>
   <a href="#ch4"><span class="toc-n">04</span>等価回路 Rb||Cb — 2つの電流の道</a>
 </div>
 
@@ -114,7 +114,7 @@ p strong{color:var(--text);font-weight:600}
 
 <h3>周波数による違い</h3>
 <div class="bands">
-  <div class="band"><h5>1 kHz（低周波）</h5><p>電場の反転が遅い → イオンが<strong>電極間の大部分を横断</strong>。大型分子に衝突し迂回する場面が頻繁に見られる。</p></div>
+  <div class="band"><h5>1 kHz（低周波）</h5><p>電場の反転が遅い → イオンが<strong>電極間の大部分を横断</strong>。周囲の成分や水和構造の影響を受けながら移動する。</p></div>
   <div class="band"><h5>10 kHz（中周波）</h5><p>反転が10倍速い → <strong>移動距離は1/10以下</strong>に。その場で小刻みに振動。</p></div>
   <div class="band"><h5>100 kHz（高周波）</h5><p>反転が100倍速い → イオンは<strong>ほぼ静止</strong>。移動距離は微小。</p></div>
 </div>
@@ -193,10 +193,10 @@ p strong{color:var(--text);font-weight:600}
 <!-- ═══ CH3 ═══ -->
 <div class="ch" id="ch3">
 <div class="ch-num">Chapter 03</div>
-<h2>大型分子と結合水</h2>
-<p>液体にはイオンと水だけでなく、<strong>大型分子</strong>（グルコース、アミノ酸、タンニン、メラノイジン等）が溶解しています。これが<strong>液体ごとのスペクトル差</strong>を生む最大の要因です。</p>
+<h2>溶けている成分と水の関わり</h2>
+<p>液体の電気的な応答の違いは、単に「大きな分子があるから」だけでは説明できません。本質的には、<strong>溶けている成分が水とどう関わるか</strong>が重要です。酸も糖もタンニンも、水と関わりながら液体の応答を変えますが、その効き方の重みが異なります。</p>
 
-<h3>大型分子の2つの効果</h3>
+<h3>成分が液体の応答を変える2つの経路</h3>
 <p><strong>① イオン経路の立体的妨害 → Rb↑</strong></p>
 <p>大型分子はイオンのドリフト経路を物理的にブロックします。イオンは迂回を強いられ、実効的な抵抗が上がります。</p>
 <p><strong>② 結合水の形成 → Cb↓</strong></p>
@@ -237,7 +237,7 @@ p strong{color:var(--text);font-weight:600}
 
 <h3>液体による違い</h3>
 <table class="cmp">
-<tr><th>液体</th><th>主な大型分子</th><th>結合水</th><th>効果</th></tr>
+<tr><th>液体</th><th>主な溶質</th><th>結合水</th><th>効果</th></tr>
 <tr><td>醤油</td><td>メラノイジン、アミノ酸</td><td>多い</td><td>Rb↑（経路妨害）、Cb↓</td></tr>
 <tr><td>赤ワイン</td><td>タンニン、ポリフェノール</td><td>やや多い</td><td>コロイド的不均一さ</td></tr>
 <tr><td>みりん</td><td>グルコース、マルトース</td><td>非常に多い</td><td>Rb↑↑、Cb↓↓</td></tr>
@@ -246,8 +246,8 @@ p strong{color:var(--text);font-weight:600}
 </table>
 
 <div class="key">
-  <h4>大型分子が変わるとスペクトルが変わる</h4>
-  <p>同じpH・同じBrixでも、大型分子の種類と量が異なれば<strong>結合水の量とイオン移動障壁が変わり</strong>、RbとCbの組み合わせが変わります。</p>
+  <h4>成分が変わるとスペクトルが変わる</h4>
+  <p>同じpH・同じBrixでも、溶解成分の種類・解離状態・水和構造が異なれば<strong>結合水の量やイオン移動度が変わり</strong>、RbとCbの組み合わせが変わります。</p>
   <p>この<strong>Rb × Cb のパターン差</strong>が液体の電気的な個性になります。</p>
 </div>
 </div>
@@ -390,7 +390,7 @@ p strong{color:var(--text);font-weight:600}
 <div class="key">
   <h4>なぜ同じ物理でスペクトルが違うのか</h4>
   <p>すべての液体で「イオンの伝導 + 水の誘電分極」という同じ物理が起きています。</p>
-  <p>違いは<strong>Rb（イオン量 × 大型分子妨害）と Cb（自由水量 × 結合水減少）</strong>の組み合わせだけ。</p>
+  <p>違いは<strong>Rb（イオン量 × 溶質による妨害）と Cb（自由水量 × 結合水減少）</strong>の組み合わせだけ。</p>
   <p>この組み合わせが f<sub>c</sub> を決め、Bode線図の形を決め、液体の電気的な個性になります。</p>
 
   <h4>実際にはR||Cが複数重なっている</h4>
