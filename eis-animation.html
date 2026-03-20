@@ -164,7 +164,7 @@ canvas{display:block;width:100%;height:100%}
 
         <div class="sl-extra">
           <div class="sl-desc" style="margin-top:4px;padding-top:4px;border-top:1px solid var(--border)">
-            <span style="color:#5a9888">●</span> 結合水 — <span id="bWb">水和殻で配向凍結</span>（大型分子に自動付随）
+            <span style="color:#5a9888">●</span> 結合水 — <span id="bWb">水和殻で配向固定</span>（大型分子に自動付随）
           </div>
         </div>
       </div>
@@ -1225,22 +1225,22 @@ function updText(){
   }else if(mode==='dc'){
     bI.innerHTML='一方向に<strong>連続ドリフト → 電気二重層</strong>形成。';
     bWf.innerHTML='<strong>一方向に完全配向</strong>';
-    bWb.innerHTML='<strong>配向不能</strong>（凍結）';
+    bWb.innerHTML='<strong>配向不能</strong>（固定）';
     bL.innerHTML='ゆっくり<strong>一方向に配向</strong>';
   }else if(mode==='1k'){
     bI.innerHTML='<strong>大きくドリフト</strong>。大型分子に衝突し迂回。';
     bWf.innerHTML='<strong>完全に配向</strong>。即座に追従';
-    bWb.innerHTML='<strong>配向不能</strong>（凍結）';
+    bWb.innerHTML='<strong>配向不能</strong>（固定）';
     bL.innerHTML='ゆっくり<strong>配向</strong>。拘束中';
   }else if(mode==='10k'){
     bI.innerHTML='追従するが<strong>移動距離が減少</strong>。';
     bWf.innerHTML='<strong>変わらず完全配向</strong>';
-    bWb.innerHTML='<strong>依然として凍結</strong>';
+    bWb.innerHTML='<strong>依然として固定</strong>';
     bL.innerHTML='配向が<strong>遅延し始める</strong>';
   }else{
     bI.innerHTML='<strong>小刻みに振動</strong>。移動距離が激減。';
     bWf.innerHTML='<strong>なお完全配向</strong> (Debye ~17GHz)';
-    bWb.innerHTML='<strong>完全に凍結</strong>';
+    bWb.innerHTML='<strong>完全に固定</strong>';
     bL.innerHTML='<strong>追従不能</strong>。ほぼ静止';
   }
 }
