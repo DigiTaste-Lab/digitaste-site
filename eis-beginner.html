@@ -122,21 +122,17 @@ p b{color:var(--text);font-weight:700}
   .wrap{padding:24px 12px 60px}
 }</style>
 <script>
-// Scale 500px-wide animation stages to fit screen
+// Scale 500px-wide animation stages to fit screen using zoom (affects layout properly)
 function scaleAnimStages(){
   document.querySelectorAll('.anim-stage').forEach(function(s){
     var box=s.closest('.anim-box');
     if(!box)return;
-    // anim-box width minus borders
     var w=box.clientWidth;
     if(w<498){
       var sc=w/500;
-      s.style.transform='scale('+sc+')';
-      s.style.transformOrigin='top left';
-      s.style.height='280px';
-      s.style.marginBottom=(-280*(1-sc))+'px';
+      s.style.zoom=sc;
     }else{
-      s.style.transform='';s.style.marginBottom='';s.style.height='';
+      s.style.zoom='';
     }
   });
 }
