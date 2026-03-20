@@ -651,7 +651,7 @@ footer {
     <div class="nav-links">
       <a href="#problem">Problem</a>
       <a href="#solution">Solution</a>
-      <a href="#awards">実績</a>
+      <a href="#awards">受賞歴</a>
       <a href="#eis">EIS原理</a>
       <a href="#contact" class="nav-cta">お問い合わせ</a>
     </div>
@@ -666,6 +666,7 @@ footer {
         <div class="hero-tag">IPA 未踏アドバンスト 2025 採択</div>
         <h1><em>Liquid-to-Action</em><br><span style="white-space:nowrap">液体から、次の一手を。</span></h1>
         <p class="hero-sub">独自の「回路×インピーダンス×機械学習」技術で液体の複雑な状態を10秒で計測。現場の誰もが即座に実行できる具体的なアクションを導き出します。</p>
+        <p style="font-size:.88rem;color:var(--text-muted);margin-top:-8px;margin-bottom:24px;animation:fadeUp 1.2s ease both">まずは、味の再現性と異常検知が求められる飲食・食品現場へ。</p>
         <div class="hero-actions">
           <a href="#contact" class="btn-primary">お問い合わせ</a>
           <a href="#solution" class="btn-secondary">技術を知る</a>
@@ -685,7 +686,7 @@ footer {
 <section class="awards-section" id="awards">
   <div class="container">
     <div class="section-label">Achievements</div>
-    <div class="section-title">外部評価・実績</div>
+    <div class="section-title">外部評価・受賞歴</div>
     <div class="awards-grid">
       <a class="award-card" href="https://techplanter.lne.st/2024/10/07/foodtech_grandprix2024/" target="_blank" rel="noopener">
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/719389_350846.png" alt="FoodTechグランプリ2024" style="width:100%;border-radius:8px;margin-bottom:12px">
@@ -755,7 +756,7 @@ footer {
           <li><span class="feature-check">✓</span><span>4電極EISで液体の電気的特徴を多次元スペクトルとして取得</span></li>
           <li><span class="feature-check">✓</span><span>機械学習で「理想」との類似度を即時判定</span></li>
           <li><span class="feature-check">✓</span><span>「水を100ml追加」等の改善アクションを自動提示</span></li>
-          <li><span class="feature-check">✓</span><span>試薬レス・前処理不要・約15cmの小型ポータブル設計</span></li>
+          <li><span class="feature-check">✓</span><span>試薬レス・前処理不要・現場に持ち込める小型設計</span></li>
 
         </ul>
       </div>
@@ -763,7 +764,7 @@ footer {
         <div class="compare-card ours">
           <span class="compare-badge">DIGITASTE — 相対評価</span>
           <h4>複合的な「状態」をパターン比較</h4>
-          <p>多次元の周波数特性で液体のアイデンティティを特定。味覚品質に影響を与える複合的な状態を一括評価します。</p>
+          <p>多次元の周波数特性で液体の状態パターンを捉えます。味覚品質に影響を与える複合的な状態を一括評価します。</p>
           <div class="compare-result">→ 「いつもの味と同じか／ズレているか」がわかる</div>
         </div>
         <div class="compare-card theirs">
@@ -786,18 +787,49 @@ footer {
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
-        <h3>基準を登録</h3>
-        <p>「理想の状態」「異常な状態」などの基準サンプルをセンサーで測定し、テンプレートとして登録します。</p>
+        <h3>理想状態を設定</h3>
+        <p>「理想の状態」のサンプルをセンサーで測定し、基準として登録します。テンプレートとして再利用できます。</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h3>測定する</h3>
-        <p>対象の液体にセンサーを浸すだけ。EISが多周波数のインピーダンスデータを数秒で取得します。</p>
+        <h3>液体を測る</h3>
+        <p>対象の液体にセンサーを浸すだけ。多周波数のインピーダンスデータを約10秒で取得します。</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
-        <h3>アクションを受け取る</h3>
-        <p>AIが類似度を分析し、「タンクを交換」「水を追加」等の具体的指示をリアルタイムで表示します。</p>
+        <h3>次の一手を受け取る</h3>
+        <p>AIが類似度を分析し、「タンクを交換」「水を追加」等の具体的な次の一手をリアルタイムで表示します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TARGET USE CASES ═══ -->
+<section style="padding:clamp(60px,8vw,100px) 0;background:var(--bg)">
+  <div class="container">
+    <div class="section-label">Target</div>
+    <div class="section-title">対象とする課題</div>
+    <p class="section-desc">DigiTasteは、液体の状態をその場で捉え、現場で次の一手につなげることを目指しています。</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:960px;margin:0 auto">
+      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
+        <div style="font-size:1.8rem;margin-bottom:12px">📊</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">味のばらつきの把握</h3>
+        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">調味液やスープの状態を数値化し、味の再現性を見える化します。</p>
+      </div>
+      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
+        <div style="font-size:1.8rem;margin-bottom:12px">💧</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">希釈・補正の判断支援</h3>
+        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">原液の濃度ズレを即座に検知し、補正量の判断を支援します。</p>
+      </div>
+      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
+        <div style="font-size:1.8rem;margin-bottom:12px">🔄</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">洗浄・交換タイミング</h3>
+        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">油やスープの劣化状態を捉え、交換判断の根拠を提供します。</p>
+      </div>
+      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
+        <div style="font-size:1.8rem;margin-bottom:12px">⚠️</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">異常状態の早期検知</h3>
+        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">通常とは異なるパターンを検出し、異常の兆候をいち早く知らせます。</p>
       </div>
     </div>
   </div>
@@ -809,7 +841,7 @@ footer {
   <div class="container" style="padding-top:80px;padding-bottom:80px">
     <div class="section-label" style="color:rgba(255,255,255,.5)">Principle — Interactive</div>
     <div class="section-title" style="color:#fff">EIS の原理を体験する</div>
-    <p class="section-desc" style="color:rgba(255,255,255,.55);margin-bottom:48px">液体に電流を流すとなぜ個性が見えるのか——シミュレーションと解説で確かめてください。</p>
+    <p class="section-desc" style="color:rgba(255,255,255,.55);margin-bottom:48px">液体にごく弱い電気をかけると、なぜ個性が見えるのか——シミュレーションと解説で確かめてください。</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:960px;margin:0 auto">
       <!-- Simulation -->
       <a href="eis-animation.html" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:32px 28px;text-decoration:none;transition:all .3s;display:block">
@@ -839,7 +871,7 @@ footer {
     <div class="cta-inner" style="max-width:680px">
       <div class="section-label">Contact</div>
       <h2>液体の未来を、<br>一緒に創りませんか？</h2>
-      <p>技術やビジョンにご興味をお持ちの企業様、メディア関係者の方、PoC（概念実証）のご相談など、お気軽にご連絡ください。</p>
+      <p>技術やビジョンにご興味をお持ちの企業様、協業をご検討の方、メディア関係者の方など、お気軽にご連絡ください。</p>
 
       <div class="contact-form">
         <div id="formSuccess" style="display:none;text-align:center;padding:48px 0">
@@ -866,7 +898,7 @@ footer {
             <label for="category">お問い合わせ種別</label>
             <select id="category" name="category">
               <option value="">選択してください</option>
-              <option value="PoC・技術検証">PoC・技術検証のご相談</option>
+              <option value="技術・活用相談">技術・活用に関するご相談</option>
               <option value="事業提携">事業提携・協業のご相談</option>
               <option value="取材・メディア">取材・メディア掲載</option>
               <option value="採用・インターン">採用・インターンシップ</option>
@@ -936,14 +968,14 @@ footer {
           <li><a href="#problem">The Problem</a></li>
           <li><a href="#solution">Our Solution</a></li>
 
-          <li><a href="#awards">実績</a>
-      <a href="#eis">EIS原理</a></li>
+          <li><a href="#awards">受賞歴</a></li>
+          <li><a href="#eis">EIS原理</a></li>
           <li><a href="#contact">お問い合わせ</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 DigiTaste Inc.</span>
+      <span>© 2026 DigiTaste Inc.</span>
     </div>
   </div>
 </footer>
