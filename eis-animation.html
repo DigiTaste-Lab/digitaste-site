@@ -15,6 +15,7 @@
   --large:#ffcc00;
 }
 html,body{height:100%;overflow:hidden}
+@media(max-width:860px){html,body{height:auto;overflow:auto;overflow-x:hidden}}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
 .header{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -82,7 +83,22 @@ canvas{display:block;width:100%;height:100%}
 .plot-sec canvas{display:block;width:100%;height:100%}
 .plot-lbl{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.2);letter-spacing:.04em;z-index:1;pointer-events:none;font-weight:500;white-space:nowrap}
 
-@media(max-width:860px){.main{grid-template-columns:1fr;grid-template-rows:1fr 260px}.side{display:none}.plots{grid-column:1}.efield-overlay{right:12px}}
+@media(max-width:860px){
+  .main{display:flex;flex-direction:column;height:auto;min-height:auto}
+  .canvas-area{height:50vh;min-height:300px;position:relative}
+  .side{display:flex;flex-wrap:wrap;border-left:none;border-top:1px solid var(--border);max-height:none;padding:16px;gap:12px}
+  .side>*{width:100%}
+  .plots{display:grid;grid-template-columns:1fr 1.8fr 1fr;height:220px;border-top:1px solid var(--border)}
+  .efield-overlay{right:8px;font-size:.65rem;padding:6px 10px}
+  .freq-overlay{gap:4px}
+  .freq-btn{font-size:.7rem;padding:6px 10px}
+  .pre-btn{font-size:.85rem;padding:10px 14px}
+  .presets{gap:6px}
+  .sl-group{padding:12px 14px}
+  .sl-row label{min-width:55px;font-size:.78rem}
+  .sl-row input[type=range]{height:8px}
+  .sl-row input[type=range]::-webkit-slider-thumb{width:28px;height:28px}
+}
 </style>
 </head>
 <body>
@@ -214,6 +230,7 @@ const WC=document.getElementById('wv'),WX=WC.getContext('2d');
 const BC=document.getElementById('bode'),BX=BC.getContext('2d');
 const NC=document.getElementById('nyq'),NX=NC.getContext('2d');
 let W,H,dpr,time=0,spd=1;
+let pScale=1; // particle scale for mobile
 let mode='1k';
 function getFreq(){return mode==='off'?0:mode==='dc'?0:mode==='1k'?1000:mode==='10k'?10000:100000}
 document.getElementById('spd').oninput=e=>{spd=+e.target.value};
@@ -228,6 +245,7 @@ function resizeCanvas(cv,cx){
 function resize(){
   dpr=devicePixelRatio||1;
   const a=C.parentElement;W=a.clientWidth;H=a.clientHeight;
+  pScale=Math.min(1, W/650);
   C.width=W*dpr;C.height=H*dpr;C.style.width=W+'px';C.style.height=H+'px';
   X.setTransform(dpr,0,0,dpr,0,0);
   resizeCanvas(WC,WX);
@@ -260,25 +278,24 @@ class Pt{
     this.parentMol=null; // for bound water: ref to large molecule
 
     if(type==='cation'){
-      this.r=5+Math.random()*2;this.charge=1;this.col='#4488ff';this.glow='rgba(68,136,255,.25)';
+      this.r=(5+Math.random()*2)*pScale;this.charge=1;this.col='#4488ff';this.glow='rgba(68,136,255,.25)';
       this.label=Math.random()>.5?'Na⁺':'H⁺';this.mob=.88+Math.random()*.12;
       this.drag=2.5+Math.random()*1;
     }else if(type==='anion'){
-      this.r=6+Math.random()*2;this.charge=-1;this.col='#ff6655';this.glow='rgba(255,102,85,.25)';
+      this.r=(6+Math.random()*2)*pScale;this.charge=-1;this.col='#ff6655';this.glow='rgba(255,102,85,.25)';
       this.label='Cl⁻';this.mob=.82+Math.random()*.1;
       this.drag=2.2+Math.random()*1;
     }else if(type==='water'){
-      this.r=11+Math.random()*2;this.charge=0;this.col='#00d4aa';this.glow='rgba(0,212,170,.2)';
+      this.r=(11+Math.random()*2)*pScale;this.charge=0;this.col='#00d4aa';this.glow='rgba(0,212,170,.2)';
       this.label='H₂O';this.mob=.12;this.rotResp=.95;
     }else if(type==='bound'){
-      // bound water - created near a large molecule
-      this.r=10+Math.random()*1.5;this.charge=0;this.col='#5a9888';this.glow='rgba(90,152,136,.15)';
-      this.label='H₂O';this.mob=.02;this.rotResp=0.05; // barely rotates
+      this.r=(10+Math.random()*1.5)*pScale;this.charge=0;this.col='#5a9888';this.glow='rgba(90,152,136,.15)';
+      this.label='H₂O';this.mob=.02;this.rotResp=0.05;
     }else if(type==='large'){
-      this.r=46+Math.random()*14;this.charge=0;this.col='#ffcc00';this.glow='rgba(255,204,0,.2)';
+      this.r=(46+Math.random()*14)*pScale;this.charge=0;this.col='#ffcc00';this.glow='rgba(255,204,0,.2)';
       this.label=currentMolLabels[Math.random()>.5?0:1]||'大型分子';this.mob=.02;
-      this.rotResp=.2; // only at low freq
-      this.rotCutoff=4; // kHz-normalized cutoff
+      this.rotResp=.2;
+      this.rotCutoff=4;
     }
   }
 
@@ -527,7 +544,7 @@ class Pt{
     if(this.charge!==0){
       // ION — simple filled circle + minimal label
       X.beginPath();X.arc(0,0,this.r,0,Math.PI*2);X.fillStyle=this.col;X.fill();
-      X.fillStyle='#fff';X.font=`600 ${Math.max(7,this.r*.95)}px 'IBM Plex Mono',monospace`;
+      X.fillStyle='#fff';X.font=`600 ${Math.max(5*pScale,this.r*.95)}px 'IBM Plex Mono',monospace`;
       X.textAlign='center';X.textBaseline='middle';X.fillText(this.label,0,.5);
 
     }else if(this.type==='water'||this.type==='bound'){
@@ -566,7 +583,7 @@ class Pt{
         X.fillStyle='rgba(255,180,80,.7)';
         X.font=`700 ${this.r*.4}px 'Noto Sans JP',sans-serif`;
         X.textAlign='center';X.textBaseline='middle';
-        X.fillText('束縛',0,-this.r-7);
+        X.fillText('束縛',0,-this.r-7*pScale);
       }
 
     }else if(this.type==='large'){
@@ -612,11 +629,11 @@ function init(){
     const e=eX();
     let lx,ly,ok;
     for(let t=0;t<80;t++){
-      lx=e.l+EW+70+Math.random()*(e.r-EW-e.l-EW-140);
-      ly=70+Math.random()*(H-140);
+      lx=e.l+EW+70*pScale+Math.random()*(e.r-EW-e.l-EW-140*pScale);
+      ly=70*pScale+Math.random()*(H-140*pScale);
       ok=true;
       for(const lm of largeMols){
-        if(Math.sqrt((lx-lm.x)**2+(ly-lm.y)**2)<120){ok=false;break}
+        if(Math.sqrt((lx-lm.x)**2+(ly-lm.y)**2)<120*pScale){ok=false;break}
       }
       if(ok)break;
     }
@@ -627,7 +644,7 @@ function init(){
     const nb=5+Math.floor(Math.random()*3);
     for(let i=0;i<nb;i++){
       const a=Math.PI*2*i/nb+Math.random()*.3;
-      const d=lm.r+14+Math.random()*4;
+      const d=lm.r+14*pScale+Math.random()*4*pScale;
       const bw=new Pt('bound',lm.x+Math.cos(a)*d,lm.y+Math.sin(a)*d);
       bw.parentMol=lm;bw.angle=Math.atan2(lm.y-bw.y,lm.x-bw.x);
       P.push(bw);

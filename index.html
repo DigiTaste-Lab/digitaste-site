@@ -492,6 +492,39 @@ section { padding: clamp(80px, 10vw, 120px) 0; }
 }
 .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+/* ─── Contact Form ─── */
+.contact-form { max-width: 560px; margin: 0 auto; text-align: left; }
+.form-row { margin-bottom: 20px; }
+.form-row label {
+  display: block; font-size: 0.85rem; font-weight: 600;
+  color: var(--text-secondary); margin-bottom: 6px;
+}
+.form-row input, .form-row textarea, .form-row select {
+  width: 100%; padding: 14px 16px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: var(--font-jp); font-size: 0.95rem;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+  outline: none; border-color: var(--red);
+}
+.form-row textarea { min-height: 140px; resize: vertical; line-height: 1.7; }
+.form-row select { cursor: pointer; }
+.form-row select option { background: var(--bg-warm); color: var(--text); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:520px){ .form-grid { grid-template-columns: 1fr; } }
+.form-submit {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-jp); font-size: 1rem; font-weight: 700;
+  padding: 16px 40px; border: none; border-radius: 12px;
+  background: var(--red); color: #fff; cursor: pointer;
+  transition: all 0.3s;
+}
+.form-submit:hover { box-shadow: 0 4px 24px var(--red-glow); transform: translateY(-2px); }
+.form-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 12px; }
+
 /* ─── Footer ─── */
 footer {
   background: var(--bg-warm);
@@ -634,7 +667,7 @@ footer {
         <h1><em>Liquid-to-Action</em><br><span style="white-space:nowrap">液体から、次の一手を。</span></h1>
         <p class="hero-sub">独自の「回路×インピーダンス×機械学習」技術で液体の複雑な状態を10秒で計測。現場の誰もが即座に実行できる具体的なアクションを導き出します。</p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">お問い合わせ →</a>
+          <a href="#contact" class="btn-primary">お問い合わせ</a>
           <a href="#solution" class="btn-secondary">技術を知る</a>
         </div>
       </div>
@@ -800,19 +833,84 @@ footer {
   </div>
 </section>
 
-<!-- ═══ CTA ═══ -->
+<!-- ═══ CONTACT FORM ═══ -->
 <section class="cta-section" id="contact">
   <div class="container">
-    <div class="cta-inner">
+    <div class="cta-inner" style="max-width:680px">
       <div class="section-label">Contact</div>
       <h2>液体の未来を、<br>一緒に創りませんか？</h2>
       <p>技術やビジョンにご興味をお持ちの企業様、メディア関係者の方、PoC（概念実証）のご相談など、お気軽にご連絡ください。</p>
-      <div class="cta-actions">
-        <a href="mailto:ak@digitaste.co.jp" class="btn-primary">メールで問い合わせ →</a>
+
+      <div class="contact-form">
+        <div id="formSuccess" style="display:none;text-align:center;padding:48px 0">
+          <div style="font-size:3rem;margin-bottom:16px">✓</div>
+          <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:8px">送信ありがとうございます</h3>
+          <p style="color:var(--text-muted)">内容を確認のうえ、折り返しご連絡いたします。</p>
+        </div>
+        <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="name">お名前 *</label>
+              <input type="text" id="name" name="name" required placeholder="山田 太郎">
+            </div>
+            <div class="form-row">
+              <label for="company">会社名・所属</label>
+              <input type="text" id="company" name="company" placeholder="株式会社○○">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="email">メールアドレス *</label>
+            <input type="email" id="email" name="email" required placeholder="your@example.com">
+          </div>
+          <div class="form-row">
+            <label for="category">お問い合わせ種別</label>
+            <select id="category" name="category">
+              <option value="">選択してください</option>
+              <option value="PoC・技術検証">PoC・技術検証のご相談</option>
+              <option value="事業提携">事業提携・協業のご相談</option>
+              <option value="取材・メディア">取材・メディア掲載</option>
+              <option value="採用・インターン">採用・インターンシップ</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="message">メッセージ *</label>
+            <textarea id="message" name="message" required placeholder="ご相談内容、ご質問などをお書きください"></textarea>
+          </div>
+          <div style="text-align:center">
+            <button type="submit" class="form-submit">送信する</button>
+            <p class="form-note">* は必須項目です。通常2営業日以内にご返信いたします。</p>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </section>
+<script>
+(function(){
+  var form=document.getElementById('contactForm');
+  if(!form)return;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=form.querySelector('.form-submit');
+    btn.textContent='送信中...';btn.disabled=true;
+    fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
+    .then(function(r){
+      if(r.ok){
+        form.style.display='none';
+        document.getElementById('formSuccess').style.display='block';
+      }else{
+        alert('送信に失敗しました。お手数ですが ak@digitaste.co.jp まで直接ご連絡ください。');
+        btn.textContent='送信する';btn.disabled=false;
+      }
+    })
+    .catch(function(){
+      alert('通信エラーが発生しました。お手数ですが ak@digitaste.co.jp まで直接ご連絡ください。');
+      btn.textContent='送信する';btn.disabled=false;
+    });
+  });
+})();
+</script>
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
@@ -845,8 +943,7 @@ footer {
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 DigiTaste Inc. Confidential</span>
-      <span><a href="mailto:ak@digitaste.co.jp">ak@digitaste.co.jp</a></span>
+      <span>© 2025 DigiTaste Inc.</span>
     </div>
   </div>
 </footer>

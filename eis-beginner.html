@@ -114,7 +114,32 @@ p b{color:var(--text);font-weight:700}
 
 .footer{text-align:center;padding:32px;font-size:.72rem;color:var(--dim)}
 @media(max-width:640px){.vs{grid-template-columns:1fr}.hero h2{font-size:1.6rem}}
-</style>
+
+/* ═══ Mobile animation scaling ═══ */
+@media(max-width:520px){
+  .anim-box{overflow:hidden}
+  .anim-cap{font-size:.78rem;padding:10px 14px}
+  .anim-label{font-size:.65rem;padding:8px 12px}
+  .wrap{padding:24px 12px 60px}
+}</style>
+<script>
+// Dynamic scale for animation stages on narrow screens
+function scaleAnimStages(){
+  document.querySelectorAll('.anim-stage').forEach(function(s){
+    var w=s.parentElement.clientWidth||s.closest('.anim-box').clientWidth;
+    if(w<500){
+      var sc=w/500;
+      s.style.transform='scale('+sc+')';
+      s.style.transformOrigin='top left';
+      s.style.marginBottom=(-280*(1-sc))+'px';
+    }else{
+      s.style.transform='';s.style.marginBottom='';
+    }
+  });
+}
+window.addEventListener('load',scaleAnimStages);
+window.addEventListener('resize',scaleAnimStages);
+</script>
 </head>
 <body>
 <nav style="position:sticky;top:0;z-index:1000;background:rgba(11,13,19,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between">
