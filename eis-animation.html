@@ -164,7 +164,7 @@ canvas{display:block;width:100%;height:100%}
 
         <div class="sl-extra">
           <div class="sl-desc" style="margin-top:4px;padding-top:4px;border-top:1px solid var(--border)">
-            <span style="color:#5a9888">●</span> 束縛水 — <span id="bWb">水和殻で配向凍結</span>（大型分子に自動付随）
+            <span style="color:#5a9888">●</span> 結合水 — <span id="bWb">水和殻で配向凍結</span>（大型分子に自動付随）
           </div>
         </div>
       </div>
@@ -583,7 +583,7 @@ class Pt{
         X.fillStyle='rgba(255,180,80,.7)';
         X.font=`700 ${this.r*.4}px 'Noto Sans JP',sans-serif`;
         X.textAlign='center';X.textBaseline='middle';
-        X.fillText('束縛',0,-this.r-7*pScale);
+        X.fillText('結合',0,-this.r-7*pScale);
       }
 
     }else if(this.type==='large'){
@@ -795,13 +795,13 @@ function onSlider(){
 const PRESETS={
   shoyu: {cat:300,ani:300,wat:15,lrg:10, Rb:15,  Cb:320e-12, label:'醤油',
     molLabels:['メラノイジン','アミノ酸'],
-    note:'NaCl ~16%でイオン極多。メラノイジン・アミノ酸が水を束縛。'},
+    note:'NaCl ~16%でイオン極多。メラノイジン・アミノ酸が水を結合。'},
   su:    {cat:80, ani:80, wat:55,lrg:2,  Rb:250, Cb:750e-12, label:'穀物酢',
     molLabels:['酢酸二量体','有機酸'],
     note:'酢酸は弱酸（部分解離）。自由水が多くCb高め。大型分子は少。'},
   mirin: {cat:40, ani:40, wat:18,lrg:12, Rb:1600,Cb:250e-12, label:'みりん',
     molLabels:['グルコース','マルトース'],
-    note:'糖分~45%で大型分子が大量。イオン少。水はほとんど束縛。'},
+    note:'糖分~45%で大型分子が大量。イオン少。水はほとんど結合。'},
   water: {cat:25, ani:25, wat:75,lrg:0,  Rb:2200,Cb:900e-12, label:'水道水',
     molLabels:['',''],
     note:'ミネラル微量。大型分子ゼロ。ほぼ全て自由水。'},

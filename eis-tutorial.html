@@ -78,7 +78,7 @@ p strong{color:var(--text);font-weight:600}
 <div class="toc">
   <a href="#ch1"><span class="toc-n">01</span>イオンの伝導電流 — 電荷が実際に移動する</a>
   <a href="#ch2"><span class="toc-n">02</span>自由水の変位電流 — 回転がコンデンサになる</a>
-  <a href="#ch3"><span class="toc-n">03</span>大型分子と束縛水 — 液体の個性を生む</a>
+  <a href="#ch3"><span class="toc-n">03</span>大型分子と結合水 — 液体の個性を生む</a>
   <a href="#ch4"><span class="toc-n">04</span>等価回路 Rb||Cb — 2つの電流の道</a>
 </div>
 
@@ -193,14 +193,14 @@ p strong{color:var(--text);font-weight:600}
 <!-- ═══ CH3 ═══ -->
 <div class="ch" id="ch3">
 <div class="ch-num">Chapter 03</div>
-<h2>大型分子と束縛水</h2>
+<h2>大型分子と結合水</h2>
 <p>液体にはイオンと水だけでなく、<strong>大型分子</strong>（グルコース、アミノ酸、タンニン、メラノイジン等）が溶解しています。これが<strong>液体ごとのスペクトル差</strong>を生む最大の要因です。</p>
 
 <h3>大型分子の2つの効果</h3>
 <p><strong>① イオン経路の立体的妨害 → Rb↑</strong></p>
 <p>大型分子はイオンのドリフト経路を物理的にブロックします。イオンは迂回を強いられ、実効的な抵抗が上がります。</p>
-<p><strong>② 束縛水の形成 → Cb↓</strong></p>
-<p>大型分子の表面にある極性基は、周囲の水分子を<strong>水素結合で拘束</strong>します。この「束縛水」は電場が変わっても配向できません。束縛水が増えると自由水が減り、誘電率が下がり、Cbが低下します。</p>
+<p><strong>② 結合水の形成 → Cb↓</strong></p>
+<p>大型分子の表面にある極性基は、周囲の水分子を<strong>水素結合で拘束</strong>します。この「結合水」は電場が変わっても配向できません。結合水が増えると自由水が減り、誘電率が下がり、Cbが低下します。</p>
 
 <div class="dia">
 <svg viewBox="0 0 600 210" width="100%">
@@ -222,22 +222,22 @@ p strong{color:var(--text);font-weight:600}
   <!-- Free water -->
   <circle cx="120" cy="55" r="11" fill="#00d4aa"/>
   <text x="120" y="36" fill="#00d4aa" font-family="IBM Plex Mono" font-size="9" font-weight="600" text-anchor="middle">自由水（配向可）</text>
-  <text x="205" y="57" fill="#5a9888" font-family="IBM Plex Mono" font-size="9" font-weight="600" text-anchor="middle">束縛水（凍結）</text>
+  <text x="205" y="57" fill="#5a9888" font-family="IBM Plex Mono" font-size="9" font-weight="600" text-anchor="middle">結合水（凍結）</text>
   <!-- Ion deflected -->
   <circle cx="90" cy="140" r="13" fill="#4488ff"/><text x="90" y="144" fill="white" font-family="IBM Plex Mono" font-size="8" font-weight="700" text-anchor="middle">Na⁺</text>
   <path d="M108,135 Q200,105 215,148 Q225,180 310,180" fill="none" stroke="#4488ff" stroke-width="2" stroke-dasharray="5,4"/>
   <text x="185" y="185" fill="rgba(68,136,255,.5)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle" font-weight="500">迂回経路</text>
 </svg>
-<div class="dia-cap">大型分子が水分子を拘束（束縛水）し、イオンの移動を妨害する</div>
+<div class="dia-cap">大型分子が水分子を拘束（結合水）し、イオンの移動を妨害する</div>
 </div>
 
-<h3>束縛水の協同的ネットワーク</h3>
-<p>束縛水の「凍結」は大型分子表面の水素結合だけが原因ではありません。<strong>束縛水同士の水素結合</strong>と外側の<strong>自由水との界面での水素結合</strong>が協同的に釣り合い、一つの安定した拘束構造を形成しています。</p>
+<h3>結合水の協同的ネットワーク</h3>
+<p>結合水の「凍結」は大型分子表面の水素結合だけが原因ではありません。<strong>結合水同士の水素結合</strong>と外側の<strong>自由水との界面での水素結合</strong>が協同的に釣り合い、一つの安定した拘束構造を形成しています。</p>
 <p>単独の水素結合は簡単に切れますが、ネットワーク全体としては安定 — 外部電場程度では配向が崩れません。</p>
 
 <h3>液体による違い</h3>
 <table class="cmp">
-<tr><th>液体</th><th>主な大型分子</th><th>束縛水</th><th>効果</th></tr>
+<tr><th>液体</th><th>主な大型分子</th><th>結合水</th><th>効果</th></tr>
 <tr><td>醤油</td><td>メラノイジン、アミノ酸</td><td>多い</td><td>Rb↑（経路妨害）、Cb↓</td></tr>
 <tr><td>赤ワイン</td><td>タンニン、ポリフェノール</td><td>やや多い</td><td>コロイド的不均一さ</td></tr>
 <tr><td>みりん</td><td>グルコース、マルトース</td><td>非常に多い</td><td>Rb↑↑、Cb↓↓</td></tr>
@@ -247,7 +247,7 @@ p strong{color:var(--text);font-weight:600}
 
 <div class="key">
   <h4>大型分子が変わるとスペクトルが変わる</h4>
-  <p>同じpH・同じBrixでも、大型分子の種類と量が異なれば<strong>束縛水の量とイオン移動障壁が変わり</strong>、RbとCbの組み合わせが変わります。</p>
+  <p>同じpH・同じBrixでも、大型分子の種類と量が異なれば<strong>結合水の量とイオン移動障壁が変わり</strong>、RbとCbの組み合わせが変わります。</p>
   <p>この<strong>Rb × Cb のパターン差</strong>が液体の電気的な個性になります。</p>
 </div>
 </div>
@@ -390,7 +390,7 @@ p strong{color:var(--text);font-weight:600}
 <div class="key">
   <h4>なぜ同じ物理でスペクトルが違うのか</h4>
   <p>すべての液体で「イオンの伝導 + 水の誘電分極」という同じ物理が起きています。</p>
-  <p>違いは<strong>Rb（イオン量 × 大型分子妨害）と Cb（自由水量 × 束縛水減少）</strong>の組み合わせだけ。</p>
+  <p>違いは<strong>Rb（イオン量 × 大型分子妨害）と Cb（自由水量 × 結合水減少）</strong>の組み合わせだけ。</p>
   <p>この組み合わせが f<sub>c</sub> を決め、Bode線図の形を決め、液体の電気的な個性になります。</p>
 
   <h4>実際にはR||Cが複数重なっている</h4>
@@ -457,7 +457,7 @@ p strong{color:var(--text);font-weight:600}
     <line x1="170" y1="125" x2="430" y2="70" stroke="rgba(255,204,0,.12)" stroke-width="1" stroke-dasharray="3,3"/>
   </svg>
 
-  <p>これはポリフェノール周辺の束縛水、有機酸周辺の束縛水、自由水——それぞれが<strong>異なる緩和時間（τ = R×C）</strong>を持つことを意味します。この<strong>複数の緩和時間の重なり</strong>こそが、ワインと他の液体を区別する本当の「個性」です。</p>
+  <p>これはポリフェノール周辺の結合水、有機酸周辺の結合水、自由水——それぞれが<strong>異なる緩和時間（τ = R×C）</strong>を持つことを意味します。この<strong>複数の緩和時間の重なり</strong>こそが、ワインと他の液体を区別する本当の「個性」です。</p>
 
   <p>DigiTasteの4電極EISセンサーは、この個性を<strong>10秒で計測し、機械学習で液体を識別</strong>します。</p>
 </div>
