@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIS やさしい解説 — 液体の個性を電気で見る</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0d13;--card:#151820;--border:rgba(255,255,255,.07);--text:#f0f0f8;--sub:#d0d0e0;--dim:#9090b0;--red:#fe0808;--blue:#4488ff;--pink:#ff6655;--green:#00d4aa;--yellow:#ffcc00;--purple:#b488ff}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:2;font-size:17px}
+.nav{position:sticky;top:0;z-index:100;background:rgba(11,13,19,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 0}
+.nav-in{max-width:860px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.nav-in h1{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;white-space:nowrap}
+.nav-in h1 span{color:var(--red)}
+.nav-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.nav-tabs a{font-size:.78rem;font-weight:600;color:var(--dim);text-decoration:none;padding:5px 12px;border-radius:6px;border:1px solid var(--border);transition:.2s}
+.nav-tabs a:hover{border-color:var(--red);color:var(--red)}
+.wrap{max-width:860px;margin:0 auto;padding:32px 24px 80px}
+.hero{text-align:center;padding:48px 0 40px}
+.hero h2{font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;line-height:1.3;margin-bottom:12px}
+.hero h2 em{color:var(--red);font-style:normal}
+.hero p{font-size:1.05rem;color:var(--sub);max-width:520px;margin:0 auto}
+.sec{margin-bottom:56px;scroll-margin-top:70px}
+.sec-num{font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:800;color:var(--red);letter-spacing:.18em;margin-bottom:2px}
+.sec h3{font-family:'Outfit',sans-serif;font-size:1.55rem;font-weight:800;margin-bottom:16px;line-height:1.35}
+p{margin-bottom:14px;color:var(--sub)}
+p b{color:var(--text);font-weight:700}
+.analogy{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin:20px 0;position:relative;overflow:hidden}
+.analogy::before{content:'💡';font-size:1.6rem;position:absolute;top:16px;right:18px}
+.analogy h4{font-size:1rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+.analogy p{margin-bottom:6px}
+.acc{border-radius:14px;padding:22px 26px;margin:20px 0}
+.acc-red{background:rgba(254,8,8,.06);border:1px solid rgba(254,8,8,.15)}
+.acc-green{background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15)}
+.acc-yellow{background:rgba(255,204,0,.06);border:1px solid rgba(255,204,0,.15)}
+.acc-purple{background:rgba(180,136,255,.06);border:1px solid rgba(180,136,255,.15)}
+.acc h4{font-size:1rem;font-weight:700;margin-bottom:8px}
+
+/* ═══ ANIMATION STAGE ═══ */
+.anim-box{background:#0e1018;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:24px 0}
+.anim-label{padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--dim);font-weight:600;border-bottom:1px solid var(--border)}
+.anim-stage{height:280px;position:relative;overflow:hidden}
+.anim-cap{background:rgba(17,19,27,.9);padding:12px 18px;font-size:.88rem;color:var(--sub);line-height:1.7;border-top:1px solid var(--border)}
+.anim-cap b{color:var(--text)}
+
+/* Electrodes — neutral gray, sign changes */
+.elec{position:absolute;top:16px;bottom:16px;width:32px;border-radius:5px;background:#333;display:flex;align-items:center;justify-content:center}
+.elec-l{left:10px}.elec-r{right:10px}
+.elec-sign{font-family:'IBM Plex Mono',monospace;font-size:1.4rem;font-weight:900;transition:color .1s}
+/* Phase 1 (0-50%): left=+, right=- */
+/* Phase 2 (50-100%): left=-, right=+ */
+@keyframes signLslow{0%,45%{content:'+';color:#ff5555}55%,100%{content:'-';color:#5588ff}}
+@keyframes signRslow{0%,45%{content:'-';color:#5588ff}55%,100%{content:'+';color:#ff5555}}
+/* We use JS to animate signs for better control */
+
+.ion{position:absolute;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;color:#fff;z-index:1}
+.cat{background:var(--blue)}.ani{background:var(--pink)}
+
+/* Ion: move LEFT at phase1 (left=+, cation repelled right... no)
+   Correct physics: cation(+) attracted to negative electrode.
+   Phase 1: left=+, right=- → cation goes RIGHT (toward -)
+   Phase 2: left=-, right=+ → cation goes LEFT (toward -)
+   So cation oscillates right then left → same as current ionSlow
+   
+   Visual fix: make electrode signs very clear
+*/
+@keyframes ionSlow{0%,100%{transform:translateX(0)}25%{transform:translateX(90px)}75%{transform:translateX(-90px)}}
+@keyframes ionFast{0%,100%{transform:translateX(0)}25%{transform:translateX(6px)}75%{transform:translateX(-6px)}}
+/* Detour — handled by JS, not CSS */
+
+/* Compass */
+.compass{width:48px;height:48px;flex-shrink:0}
+.compass-body{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.15);position:relative;background:rgba(0,0,0,.3)}
+.compass .n{position:absolute;width:5px;height:18px;background:#ff4444;top:3px;left:21.5px;border-radius:2px}
+.compass .s{position:absolute;width:5px;height:18px;background:#eee;bottom:3px;left:21.5px;border-radius:2px}
+.compass .c{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);top:21px;left:21px}
+.compass.bound .compass-body{border-color:rgba(255,204,0,.25);background:rgba(255,204,0,.04)}
+.compass.bound .n{background:#886644}.compass.bound .s{background:#776655}
+.compass-tag{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:.45rem;font-weight:700;white-space:nowrap;padding:1px 4px;border-radius:3px}
+.compass-tag.bound-tag{color:#ffcc00;background:rgba(255,204,0,.15)}
+.compass-tag.free-tag{color:#00d4aa;background:rgba(0,212,170,.15)}
+
+/* H2O molecule */
+.h2o{width:48px;height:44px;position:relative;flex-shrink:0}
+.h2o .oo{width:18px;height:18px;border-radius:50%;background:#ee3333;position:absolute;bottom:0;left:15px;display:flex;align-items:center;justify-content:center;font-size:.4rem;font-weight:800;color:#fff;font-family:'IBM Plex Mono',monospace}
+.h2o .hh{width:12px;height:12px;border-radius:50%;background:#ffffff;position:absolute;display:flex;align-items:center;justify-content:center;font-size:.35rem;font-weight:800;color:#333;font-family:'IBM Plex Mono',monospace}
+.h2o .h1{top:0;left:4px}.h2o .h2{top:0;right:4px}
+.h2o-bond{position:absolute;width:1.5px;height:14px;background:rgba(255,255,255,.2)}
+.h2o .b1{top:9px;left:20px;transform:rotate(25deg)}.h2o .b2{top:9px;right:17px;transform:rotate(-25deg)}
+
+.h2o.bound .oo{background:#886644}.h2o.bound .hh{background:#aa9977;color:#554}
+
+/* Large mol */
+.large-mol{position:absolute;width:80px;height:50px;background:var(--yellow);border-radius:40px/25px;opacity:.8;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:700;color:rgba(80,50,0,.85);z-index:1}
+.influence{position:absolute;border:2px dashed rgba(255,204,0,.18);border-radius:50%;z-index:0}
+
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.vs>div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:center}
+.vs h4{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.vs p{font-size:.88rem;margin-bottom:4px}
+.cta{text-align:center;margin:48px 0;padding:32px;background:var(--card);border-radius:16px;border:1px solid var(--border)}
+.cta h3{margin-bottom:12px}
+.cta a{display:inline-block;margin:6px;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:.95rem;transition:.2s}
+.cta .btn-sim{background:rgba(254,8,8,.15);border:2px solid var(--red);color:var(--red)}
+.cta .btn-adv{background:rgba(180,136,255,.1);border:2px solid var(--purple);color:var(--purple)}
+.cta a:hover{transform:translateY(-2px)}
+
+/* Big banner for step 3 */
+.big-banner{background:linear-gradient(135deg,rgba(255,204,0,.08),rgba(255,100,0,.06));border:2px solid rgba(255,204,0,.2);border-radius:16px;padding:28px;margin:24px 0;text-align:center}
+.big-banner h3{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;color:var(--yellow);margin-bottom:12px}
+.big-banner p{font-size:1.05rem;max-width:600px;margin:0 auto}
+
+.footer{text-align:center;padding:32px;font-size:.72rem;color:var(--dim)}
+@media(max-width:640px){.vs{grid-template-columns:1fr}.hero h2{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-in">
+  <h1><span>EIS</span> やさしい解説</h1>
+  <div class="nav-tabs">
+    <a href="#s1">①粒の動き</a><a href="#s2">②水の向き</a><a href="#s3">③大きな分子</a><a href="#s4">④グラフで見る</a>
+    <a href="eis-tutorial.html">📚 詳しい解説</a><a href="eis-animation.html">▶ シミュレーション</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+<div class="hero">
+  <h2>液体に電気をかけると<br><em>液体の個性</em>が見えてくる</h2>
+  <p>体脂肪計が体に弱い電気を使って違いを見るように、DigiTasteは液体にごく弱い電気をかけて、その戻り方を見ています。4ステップでそのしくみを見てみましょう。</p>
+</div>
+
+<!-- ═══ STEP 1: IONS ═══ -->
+<section class="sec" id="s1">
+<div class="sec-num">STEP 1</div>
+<h3>まず、液体に電気をかけてみる</h3>
+<p>センサーの先には、<b>電気の出入り口になる金属</b>（これを「電極」と呼びます）があります。ここから液体にごく弱い電気の刺激を与えます。</p>
+<p>電極にはプラスとマイナスがあります。<b>このプラスとマイナスを、ゆっくり入れ替えたり速く入れ替えたりしながら測ります。</b></p>
+<p>液体の中には、電気に反応して動く<b>小さな粒</b>がいます。たとえば塩が溶けた水には、<b>プラスの粒とマイナスの粒</b>がたくさんいます。プラスの粒はマイナス電極に引き寄せられ、マイナスの粒はプラス電極に引き寄せられます。プラスとマイナスが入れ替わると、粒たちも向きを変えて<b>行ったり来たり</b>します。</p>
+
+<!-- Slow AC animation with JS-controlled electrode signs -->
+<div class="anim-box">
+<div class="anim-label">ゆっくり入れ替えたとき — 電極の＋と−が入れ替わるのを見てください</div>
+<div class="anim-stage" id="slowStage">
+  <div class="elec elec-l"><span class="elec-sign" id="signL1">＋</span></div>
+  <div class="elec elec-r"><span class="elec-sign" id="signR1">−</span></div>
+  <!-- All cations move RIGHT at phase1 (toward - electrode), LEFT at phase2 — NO delays -->
+  <div class="ion cat" style="top:30px;left:120px;animation:ionSlow 4s ease-in-out infinite">Na⁺</div>
+  <div class="ion cat" style="top:100px;left:180px;animation:ionSlow 4s ease-in-out infinite">Na⁺</div>
+  <div class="ion cat" style="top:170px;left:140px;animation:ionSlow 4s ease-in-out infinite">K⁺</div>
+  <div class="ion cat" style="top:70px;left:280px;animation:ionSlow 4s ease-in-out infinite">Na⁺</div>
+  <div class="ion cat" style="top:210px;left:240px;animation:ionSlow 4s ease-in-out infinite">H⁺</div>
+  <!-- All anions move opposite — NO delays -->
+  <div class="ion ani" style="top:50px;left:350px;animation:ionSlow 4s ease-in-out infinite reverse">Cl⁻</div>
+  <div class="ion ani" style="top:130px;left:310px;animation:ionSlow 4s ease-in-out infinite reverse">Cl⁻</div>
+  <div class="ion ani" style="top:190px;left:380px;animation:ionSlow 4s ease-in-out infinite reverse">Cl⁻</div>
+  <div class="ion ani" style="top:40px;left:220px;animation:ionSlow 4s ease-in-out infinite reverse">Cl⁻</div>
+</div>
+<div class="anim-cap"><b>電極の＋−が入れ替わる</b>のに合わせて、<b>プラスの粒（青）はマイナス電極に向かって</b>大きく移動し、<b>マイナスの粒（赤）はプラス電極に向かって</b>逆方向に動きます。ゆっくりなので遠くまで移動できます。</div>
+</div>
+
+<div class="anim-box">
+<div class="anim-label">速く入れ替えたとき — すぐ入れ替わるので動けない</div>
+<div class="anim-stage" id="fastStage">
+  <div class="elec elec-l"><span class="elec-sign" id="signL2">＋</span></div>
+  <div class="elec elec-r"><span class="elec-sign" id="signR2">−</span></div>
+  <div class="ion cat" style="top:30px;left:140px;animation:ionFast .3s ease-in-out infinite">Na⁺</div>
+  <div class="ion cat" style="top:100px;left:210px;animation:ionFast .3s ease-in-out infinite">Na⁺</div>
+  <div class="ion cat" style="top:170px;left:170px;animation:ionFast .3s ease-in-out infinite">K⁺</div>
+  <div class="ion cat" style="top:70px;left:300px;animation:ionFast .3s ease-in-out infinite">Na⁺</div>
+  <div class="ion ani" style="top:50px;left:360px;animation:ionFast .3s ease-in-out infinite reverse">Cl⁻</div>
+  <div class="ion ani" style="top:130px;left:320px;animation:ionFast .3s ease-in-out infinite reverse">Cl⁻</div>
+  <div class="ion ani" style="top:190px;left:390px;animation:ionFast .3s ease-in-out infinite reverse">Cl⁻</div>
+</div>
+<div class="anim-cap">＋−が<b>すぐ入れ替わる</b>ため、粒は方向を変える暇がなく<b>ほとんど動けません</b>。その場でぶるぶる震えるだけ。</div>
+</div>
+
+<div class="acc acc-red">
+<h4>🧂 ポイント</h4>
+<p><b>醤油</b>（塩分16%）→ 動ける粒がたくさん → 電流がすごく流れやすい</p>
+<p><b>水道水</b>（ミネラル少し）→ 動ける粒が少ない → 電流が流れにくい</p>
+</div>
+</section>
+
+<!-- ═══ STEP 2: WATER ═══ -->
+<section class="sec" id="s2">
+<div class="sec-num">STEP 2</div>
+<h3>水も電気に反応して向きを変える</h3>
+<p>STEP 1で、液体にプラスとマイナスをかけました。すると液体の中では、粒が動くだけでなく、<b>もうひとつの反応</b>が起きます。</p>
+<p>水の小さなかたまりは、片側がプラス寄り、もう片側がマイナス寄りという偏りを持っています。ちょうど<b>方位磁針（コンパス）</b>のように、電極の向きに合わせて<b>くるっと向きを変えます</b>。</p>
+<p>この向きの変わりやすさも、電流の戻り方に影響します。つまり、<b>粒が動く反応だけでなく、水の向きの変わりやすさも測定に表れる</b>のです。</p>
+
+<!-- Water molecules + compasses side by side, ON/OFF cycling -->
+<div class="anim-box">
+<div class="anim-label">電極の＋−を入れ替えると → 水が揃う → 入れ替えを止めると → バラバラに戻る（繰り返し）</div>
+<div class="anim-stage" id="waterStage" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px;position:relative">
+  <!-- Electrodes — same style as STEP 1 -->
+  <div class="elec elec-l" style="position:absolute;top:16px;bottom:16px;left:10px"><span class="elec-sign" id="signLW">＋</span></div>
+  <div class="elec elec-r" style="position:absolute;top:16px;bottom:16px;right:10px"><span class="elec-sign" id="signRW">−</span></div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.5)" id="efState">電極 ON →</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center" id="waterRow">
+    <!-- Pairs of H2O + compass, populated by JS -->
+  </div>
+  <div style="display:flex;gap:24px;font-size:.72rem;color:var(--dim);font-family:'IBM Plex Mono',monospace">
+    <span>🔴 O（酸素・マイナス寄り）</span>
+    <span>⚪ H（水素・プラス寄り）</span>
+    <span>🔻 コンパスの赤い針 = プラス側</span>
+  </div>
+</div>
+<div class="anim-cap">STEP 1と同じ電極で＋−を入れ替えると、水のかたまりもそれに合わせて<b>向きを変えます</b>。水素（プラス寄り）が−電極の方を、酸素（マイナス寄り）が＋電極の方を向きます。入れ替えを止めるとバラバラに戻ります。<b>水はその場で向きを変えるだけで、移動しません。</b>この向きの変わりやすさも、電流の戻り方に影響します。</div>
+</div>
+
+<div class="acc acc-green">
+<h4>💧 電流の「2つの道」</h4>
+<div class="vs">
+  <div style="border-color:rgba(68,136,255,.2)">
+    <h4 style="color:var(--blue)">道① 粒が移動する</h4>
+    <!-- Mini ion animation -->
+    <svg viewBox="0 0 240 60" style="width:100%;max-width:240px;height:60px;display:block;margin:8px auto;background:rgba(0,0,0,.2);border-radius:8px">
+      <rect x="2" y="5" width="12" height="50" rx="3" fill="#333"/><text x="8" y="34" fill="#ff5555" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="900" text-anchor="middle">＋</text>
+      <rect x="226" y="5" width="12" height="50" rx="3" fill="#333"/><text x="232" y="34" fill="#5588ff" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="900" text-anchor="middle">−</text>
+      <circle cx="80" cy="22" r="10" fill="var(--blue)"><animate attributeName="cx" values="80;160;80" dur="3s" repeatCount="indefinite"/></circle>
+      <text x="80" y="26" fill="#fff" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="700" text-anchor="middle"><animate attributeName="x" values="80;160;80" dur="3s" repeatCount="indefinite"/>＋</text>
+      <circle cx="160" cy="42" r="10" fill="var(--pink)"><animate attributeName="cx" values="160;80;160" dur="3s" repeatCount="indefinite"/></circle>
+      <text x="160" y="46" fill="#fff" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="700" text-anchor="middle"><animate attributeName="x" values="160;80;160" dur="3s" repeatCount="indefinite"/>−</text>
+    </svg>
+    <p>粒が実際に左右に動いて電流を運ぶ</p>
+    <p>→ <b>動ける粒が多い</b>ほど<br>　 電流が流れやすい</p>
+  </div>
+  <div style="border-color:rgba(0,212,170,.2)">
+    <h4 style="color:var(--green)">道② 水が向きを変える</h4>
+    <!-- Mini water rotation animation - JS controlled for correctness -->
+    <svg viewBox="0 0 240 70" style="width:100%;max-width:240px;height:70px;display:block;margin:8px auto;background:rgba(0,0,0,.2);border-radius:8px" id="miniWaterSvg">
+      <rect x="2" y="5" width="12" height="60" rx="3" fill="#333"/><text x="8" y="38" fill="#ff5555" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="900" text-anchor="middle">＋</text>
+      <rect x="226" y="5" width="12" height="60" rx="3" fill="#333"/><text x="232" y="38" fill="#5588ff" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="900" text-anchor="middle">−</text>
+      <!-- Water molecule 1 -->
+      <g id="mw1" style="transform-origin:60px 35px;transition:transform 1.2s ease-in-out">
+        <circle cx="52" cy="29" r="5" fill="#fff"/><text x="52" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="68" cy="29" r="5" fill="#fff"/><text x="68" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="60" cy="42" r="7" fill="#ee3333"/><text x="60" y="45" fill="#fff" font-size="5" font-weight="800" text-anchor="middle">O</text>
+      </g>
+      <!-- Water molecule 2 -->
+      <g id="mw2" style="transform-origin:120px 35px;transition:transform 1.2s ease-in-out">
+        <circle cx="112" cy="29" r="5" fill="#fff"/><text x="112" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="128" cy="29" r="5" fill="#fff"/><text x="128" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="120" cy="42" r="7" fill="#ee3333"/><text x="120" y="45" fill="#fff" font-size="5" font-weight="800" text-anchor="middle">O</text>
+      </g>
+      <!-- Water molecule 3 -->
+      <g id="mw3" style="transform-origin:180px 35px;transition:transform 1.2s ease-in-out">
+        <circle cx="172" cy="29" r="5" fill="#fff"/><text x="172" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="188" cy="29" r="5" fill="#fff"/><text x="188" y="32" fill="#333" font-size="5" font-weight="800" text-anchor="middle">H</text>
+        <circle cx="180" cy="42" r="7" fill="#ee3333"/><text x="180" y="45" fill="#fff" font-size="5" font-weight="800" text-anchor="middle">O</text>
+      </g>
+    </svg>
+    <script>
+    (function(){
+      var mols = [document.getElementById('mw1'),document.getElementById('mw2'),document.getElementById('mw3')];
+      var on = true;
+      setInterval(function(){
+        if(on){
+          // Align: H(+) toward - electrode (right) = rotate 90deg CW
+          mols.forEach(function(m,i){ m.style.transform = 'rotate('+(85+Math.random()*10)+'deg)'; });
+        } else {
+          mols.forEach(function(m){ m.style.transform = 'rotate('+(Math.random()*300-150)+'deg)'; });
+        }
+        on = !on;
+      }, 2000);
+    })();
+    </script>
+    <p>水がその場で向きを変えるだけ</p>
+    <p>→ <b>向きを変えやすい水が多い</b>ほど<br>　 電流が流れやすい</p>
+  </div>
+</div>
+</div>
+
+</section>
+
+<!-- ═══ STEP 3: LARGE MOLECULES ═══ -->
+<section class="sec" id="s3">
+<div class="sec-num">STEP 3</div>
+
+<div class="big-banner">
+  <h3>🧪 大きな分子が粒と水を「邪魔」する</h3>
+  <p>砂糖、ポリフェノール、アミノ酸——大きな分子が液体の「道」を変える</p>
+</div>
+
+<div class="anim-box">
+<div class="anim-label" style="font-size:.85rem;padding:14px 18px;background:rgba(255,204,0,.05)">⬇ 大きな分子が粒の道を塞ぎ、まわりの水を動けなくする</div>
+<div class="anim-stage" id="molStage">
+  <div class="elec elec-l"><span class="elec-sign" id="signL3">＋</span></div>
+  <div class="elec elec-r"><span class="elec-sign" id="signR3">−</span></div>
+  <!-- Large molecules with influence zones -->
+  <div class="influence" style="width:130px;height:100px;top:20px;left:195px"></div>
+  <div class="large-mol" style="top:42px;left:210px;width:70px;height:42px">グルコース</div>
+  <div class="influence" style="width:130px;height:100px;top:130px;left:310px"></div>
+  <div class="large-mol" style="top:152px;left:325px;width:70px;height:42px">タンニン</div>
+  <!-- Bound compasses (frozen — near large mol) with 束縛水 labels -->
+  <div class="compass bound" style="position:absolute;top:30px;left:175px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag bound-tag">動けない水</span></div>
+  <div class="compass bound" style="position:absolute;top:65px;left:172px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag bound-tag">動けない水</span></div>
+  <div class="compass bound" style="position:absolute;top:30px;left:278px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag bound-tag">動けない水</span></div>
+  <div class="compass bound" style="position:absolute;top:140px;left:300px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag bound-tag">動けない水</span></div>
+  <div class="compass bound" style="position:absolute;top:175px;left:395px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag bound-tag">動けない水</span></div>
+  <!-- FREE compasses (spinning — away from large mol) with 自由水 labels -->
+  <div class="compass free-compass" style="position:absolute;top:120px;left:100px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag free-tag">動ける水</span></div>
+  <div class="compass free-compass" style="position:absolute;top:210px;left:170px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag free-tag">動ける水</span></div>
+  <div class="compass free-compass" style="position:absolute;top:220px;left:420px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag free-tag">動ける水</span></div>
+  <div class="compass free-compass" style="position:absolute;top:10px;left:110px"><div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div><span class="compass-tag free-tag">動ける水</span></div>
+  <!-- Ions — JS-controlled paths that curve around molecules -->
+  <div class="ion cat" id="di1" style="top:20px;left:65px">Na⁺</div>
+  <div class="ion cat" id="di2" style="top:110px;left:60px">K⁺</div>
+  <div class="ion cat" id="di3" style="top:220px;left:70px">Na⁺</div>
+  <div class="ion ani" id="di4" style="top:15px;left:440px">Cl⁻</div>
+  <div class="ion ani" id="di5" style="top:130px;left:445px">Cl⁻</div>
+  <div class="ion ani" id="di6" style="top:230px;left:440px">Cl⁻</div>
+</div>
+<div class="anim-cap"><b>黄色い楕円＝大きな分子</b>。<b>粒（青＋赤）</b>は大きな分子を避けて<b>遠回り</b>。点線の影響圏内のコンパスは<b>針が動かない＝動けない水</b>。影響圏の外のコンパスは<b>電極の向きに合わせて向きが変わる＝動ける水</b>。</div>
+</div>
+
+<div class="analogy">
+<h4>たとえ話：重い荷物を持つ人たち</h4>
+<p>廊下を歩いている人たち（粒や水）がいます。ところが、<b>ものすごく重い荷物（大きな分子）を複数人（水）で持って立っている</b>グループがあちこちにいます。</p>
+<p>歩いている人（粒）はそのグループを避けて<b>遠回り</b>するしかありません。荷物を持っている人は<b>重すぎて向きを変えられない</b>。でも荷物を持っていない人は自由に動けます。</p>
+<p><b>荷物持ちグループ（大きな分子＋動けない水）が多いほど → 遠回りが増え、向きを変えられる水が減る</b></p>
+</div>
+
+<div class="acc acc-yellow">
+<h4>🔑 これが「液体の個性」の正体</h4>
+<p>甘さの素（砂糖やブドウ糖）、酸っぱさの素（クエン酸や酢酸）、渋みの素（タンニン）——<b>これらはすべて「大きな分子」です</b>。</p>
+<p>大きな分子の<b>種類と量</b>が変わると、「粒が移動する道の電流の流れやすさ」と「水が向きを変える道の電流の流れやすさ」の組み合わせが変わります。<b>同じくらい甘く、同じくらい酸っぱい液体でも、中に溶けている分子が違えばパターンが違う。</b>これが<b>液体ごとの個性</b>です。</p>
+</div>
+</section>
+
+<!-- ═══ STEP 4: CIRCUIT ═══ -->
+<section class="sec" id="s4">
+<div class="sec-num">STEP 4</div>
+<h3>液体の「2つの道」を図で表す</h3>
+
+<div class="vs">
+<div style="border-color:rgba(254,8,8,.2)">
+  <h4 style="color:var(--red)">道① 粒が移動する道<br><span style="font-size:.8em;color:var(--dim)">（専門用語では「抵抗 Rb」）</span></h4>
+  <svg viewBox="0 0 120 40" style="width:120px;height:40px;display:block;margin:8px auto"><line x1="5" y1="20" x2="25" y2="20" stroke="#fe4444" stroke-width="2"/><polyline points="25,20 30,8 40,32 50,8 60,32 70,8 80,32 85,20" fill="none" stroke="#fe4444" stroke-width="2.5" stroke-linecap="round"/><line x1="85" y1="20" x2="115" y2="20" stroke="#fe4444" stroke-width="2"/></svg>
+  <p>動ける粒が電流を運ぶ道</p>
+  <p>動ける粒が多い → <b>電流が流れやすい</b><br>大きな分子が邪魔 → <b>電流が流れにくい</b></p>
+</div>
+<div style="border-color:rgba(0,212,170,.2)">
+  <h4 style="color:var(--green)">道② 水が向きを変える道<br><span style="font-size:.8em;color:var(--dim)">（専門用語では「コンデンサ Cb」）</span></h4>
+  <svg viewBox="0 0 120 40" style="width:120px;height:40px;display:block;margin:8px auto"><line x1="5" y1="20" x2="48" y2="20" stroke="#00d4aa" stroke-width="2"/><line x1="48" y1="6" x2="48" y2="34" stroke="#00d4aa" stroke-width="3"/><line x1="62" y1="6" x2="62" y2="34" stroke="#00d4aa" stroke-width="3"/><line x1="62" y1="20" x2="115" y2="20" stroke="#00d4aa" stroke-width="2"/></svg>
+  <p>水が向きを変えることで電流の戻り方に影響する道</p>
+  <p>向きを変えやすい水が多い → <b>電流が流れやすい</b><br>動けない水が増える → <b>電流が流れにくい</b></p>
+</div>
+</div>
+
+<!-- Parallel RC circuit diagram — LARGE -->
+<div style="text-align:center;margin:32px 0">
+<svg viewBox="0 0 560 220" style="width:100%;max-width:620px;display:block;margin:0 auto;background:rgba(0,0,0,.15);border-radius:14px;padding:10px">
+  <!-- Wires -->
+  <line x1="30" y1="110" x2="110" y2="110" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <line x1="110" y1="110" x2="110" y2="55" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <line x1="110" y1="110" x2="110" y2="165" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <line x1="410" y1="55" x2="410" y2="165" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <line x1="410" y1="110" x2="530" y2="110" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <!-- Top: Rb (resistor zigzag) -->
+  <line x1="110" y1="55" x2="170" y2="55" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <polyline points="170,55 180,35 200,75 220,35 240,75 260,35 270,55" fill="none" stroke="#fe4444" stroke-width="3" stroke-linecap="round"/>
+  <line x1="270" y1="55" x2="410" y2="55" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <text x="220" y="28" fill="#fe4444" font-family="'IBM Plex Mono',monospace" font-size="18" font-weight="700" text-anchor="middle">Rb</text>
+  <text x="330" y="50" fill="rgba(255,130,130,.8)" font-family="'Noto Sans JP',sans-serif" font-size="13" text-anchor="middle" font-weight="600">道① 粒の移動</text>
+  <!-- Bottom: Cb (capacitor) -->
+  <line x1="110" y1="165" x2="220" y2="165" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <line x1="220" y1="145" x2="220" y2="185" stroke="#00d4aa" stroke-width="4.5"/>
+  <line x1="240" y1="145" x2="240" y2="185" stroke="#00d4aa" stroke-width="4.5"/>
+  <line x1="240" y1="165" x2="410" y2="165" stroke="rgba(255,255,255,.45)" stroke-width="2.5"/>
+  <text x="230" y="138" fill="#00d4aa" font-family="'IBM Plex Mono',monospace" font-size="18" font-weight="700" text-anchor="middle">Cb</text>
+  <text x="330" y="175" fill="rgba(100,230,200,.8)" font-family="'Noto Sans JP',sans-serif" font-size="13" text-anchor="middle" font-weight="600">道② 水の向き変化</text>
+  <!-- Terminals -->
+  <circle cx="30" cy="110" r="5" fill="rgba(255,255,255,.45)"/>
+  <circle cx="530" cy="110" r="5" fill="rgba(255,255,255,.45)"/>
+  <!-- Labels -->
+  <text x="45" y="100" fill="rgba(255,255,255,.5)" font-family="'IBM Plex Mono',monospace" font-size="14" text-anchor="start">入力</text>
+  <text x="515" y="100" fill="rgba(255,255,255,.5)" font-family="'IBM Plex Mono',monospace" font-size="14" text-anchor="end">出力</text>
+  <!-- Current flow arrow -->
+  <line x1="50" y1="125" x2="95" y2="125" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+  <path d="M90,119 L102,125 L90,131" fill="rgba(255,255,255,.3)"/>
+  <text x="72" y="140" fill="rgba(255,255,255,.3)" font-family="'Noto Sans JP',sans-serif" font-size="11" text-anchor="middle">電流 →</text>
+  <!-- Explanation -->
+  <text x="280" y="208" fill="rgba(255,255,255,.4)" font-family="'Noto Sans JP',sans-serif" font-size="12" text-anchor="middle">液体＝この2つの並列回路。電流は通りやすい方の道を選ぶ。</text>
+</svg>
+</div>
+
+<p>この2つの道が<b>横並び</b>になっています。電流は通りやすい方の道を選びます。</p>
+<p><b>醤油</b>のように動ける粒が多い液体では、ほぼ全部が粒の移動する道を通ります。<b>水道水</b>のように動ける粒が少ない液体では、速く入れ替えたときに水が向きを変える道の影響も見えてきます。</p>
+
+<h3>2つの道で「タイミング」がちがう</h3>
+<p>ここがポイントです。粒が移動する道と水が向きを変える道では、電流の戻ってくるタイミングがちょっとだけ違います。</p>
+
+<div class="analogy">
+<h4>たとえ話：2人で手をふる</h4>
+<p>2人が同じリズムで手を左右にふっているとします。</p>
+<p><b>1人目（粒が移動する道）</b>は、かけ声にぴったり合わせて動きます。「右！」で右、「左！」で左。完全にそろっています。</p>
+<p><b>2人目（水が向きを変える道）</b>も同じリズムで動いています。でも、よーく見ると<b>ほんの少しだけずれていて</b>、1人目がいちばん右に来たとき、2人目はまだ途中にいます。<b>ちょっとリズム感がズレてる子</b>ですね。</p>
+<p>この<b>「同じリズムなのに、動きがちょっとだけずれている」</b>ことを<b>タイミングのズレ</b>と呼びます（専門用語では「位相のずれ」）。</p>
+</div>
+
+<p><b>醤油</b>は粒が移動する道がとても通りやすいので、ほぼ全部がそちらを通ります。→ <b>ズレ＝ゼロ</b></p>
+<p><b>水道水</b>は粒が移動する道が通りにくいので、速く入れ替えたときに水が向きを変える道も使い始めます。すると全体で<b>少しだけズレ</b>が見えるようになります。</p>
+
+<div class="acc acc-purple">
+<h4>📊 測定結果のグラフ ＝ 液体の「個性」</h4>
+<p>プラスとマイナスを入れ替える速さを、<b>ゆっくりから速くへ</b>変えながら、2つのことを測ったグラフです：</p>
+<p>① <b>電流の流れにくさ</b>（専門用語でインピーダンス |Z|）→ 醤油は低い（流れやすい）、水道水は高い（流れにくい）</p>
+<p>② <b>タイミングのズレ</b>（専門用語で位相 φ）→ 水が向きを変える道を通る割合が大きいほどズレる</p>
+
+<!-- Bode plot sketch: shoyu vs water — LARGE -->
+<svg viewBox="0 0 780 530" style="width:100%;max-width:840px;display:block;margin:20px auto;background:#0e1018;border-radius:12px;border:1px solid rgba(255,255,255,.08)">
+  <!-- Title -->
+  <text x="390" y="26" fill="rgba(255,255,255,.8)" font-family="'Outfit',sans-serif" font-size="16" text-anchor="middle" font-weight="800">測定結果のグラフ（<tspan fill="#ff6666">醤油</tspan> vs <tspan fill="#88ddaa">水道水</tspan>）</text>
+
+  <!-- ═══ TOP: |Z| ═══ -->
+  <text x="120" y="48" fill="rgba(255,255,255,.6)" font-family="'Noto Sans JP',sans-serif" font-size="12" font-weight="700">電流の流れにくさ |Z|</text>
+  <!-- Axes -->
+  <line x1="120" y1="60" x2="120" y2="195" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <line x1="120" y1="195" x2="590" y2="195" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <!-- Y labels -->
+  <text x="112" y="78" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">2000Ω</text>
+  <text x="112" y="115" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">500Ω</text>
+  <text x="112" y="170" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">15Ω</text>
+  <!-- Grid -->
+  <line x1="120" y1="75" x2="590" y2="75" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+  <line x1="120" y1="112" x2="590" y2="112" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+  <line x1="120" y1="167" x2="590" y2="167" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+  <line x1="280" y1="60" x2="280" y2="195" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <line x1="440" y1="60" x2="440" y2="195" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <!-- Water curve (green) -->
+  <path d="M125,73 Q230,73 320,76 Q410,82 490,100 Q550,116 585,130" fill="none" stroke="#88ddaa" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Shoyu curve (red) -->
+  <path d="M125,168 L585,167" fill="none" stroke="#ff6666" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- In-graph labels with color matching the liquid -->
+  <text x="600" y="100" fill="#88ddaa" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">水道水</text>
+  <text x="600" y="116" fill="rgba(136,221,170,.6)" font-family="'Noto Sans JP',sans-serif" font-size="10">↑ 流れにくい</text>
+  <line x1="585" y1="105" x2="595" y2="105" stroke="rgba(136,221,170,.3)" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="600" y="163" fill="#ff6666" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">醤油</text>
+  <text x="600" y="179" fill="rgba(255,102,102,.6)" font-family="'Noto Sans JP',sans-serif" font-size="10">↓ 流れやすい</text>
+  <line x1="585" y1="168" x2="595" y2="168" stroke="rgba(255,102,102,.3)" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Upper plot inline explanation -->
+  <rect x="170" y="120" width="380" height="44" rx="8" fill="rgba(10,12,18,.85)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+  <text x="360" y="138" fill="#ff6666" font-family="'Noto Sans JP',sans-serif" font-size="11" text-anchor="middle" font-weight="600">醤油：粒が多いので低い ＝ 電流が流れやすい</text>
+  <text x="360" y="156" fill="#88ddaa" font-family="'Noto Sans JP',sans-serif" font-size="11" text-anchor="middle" font-weight="600">水道水：粒が少ないので高い ＝ 電流が流れにくい</text>
+
+  <!-- ═══ BOTTOM: Phase ═══ -->
+  <text x="120" y="235" fill="rgba(255,255,255,.6)" font-family="'Noto Sans JP',sans-serif" font-size="12" font-weight="700">タイミングのズレ φ</text>
+  <!-- Axes -->
+  <line x1="120" y1="248" x2="120" y2="400" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <line x1="120" y1="253" x2="590" y2="253" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <line x1="120" y1="400" x2="590" y2="400" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <!-- Y labels -->
+  <text x="112" y="258" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">0°</text>
+  <text x="112" y="295" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">-20°</text>
+  <text x="112" y="332" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">-40°</text>
+  <text x="112" y="368" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">-60°</text>
+  <text x="112" y="400" fill="rgba(255,255,255,.55)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="end">-80°</text>
+  <!-- Grid -->
+  <line x1="280" y1="248" x2="280" y2="400" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <line x1="440" y1="248" x2="440" y2="400" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <line x1="120" y1="330" x2="590" y2="330" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <line x1="120" y1="366" x2="590" y2="366" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+  <!-- Water curve (green) -->
+  <path d="M125,255 Q230,255 320,260 Q410,280 490,348 Q550,382 585,392" fill="none" stroke="#88ddaa" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Shoyu curve (red) -->
+  <path d="M125,255 Q280,255 440,257 Q530,259 585,260" fill="none" stroke="#ff6666" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- In-graph labels -->
+  <text x="600" y="385" fill="#88ddaa" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">水道水</text>
+  <text x="600" y="401" fill="rgba(136,221,170,.6)" font-family="'Noto Sans JP',sans-serif" font-size="10">↓ 大きくズレる</text>
+  <line x1="585" y1="392" x2="595" y2="392" stroke="rgba(136,221,170,.3)" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="600" y="258" fill="#ff6666" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">醤油</text>
+  <text x="600" y="274" fill="rgba(255,102,102,.6)" font-family="'Noto Sans JP',sans-serif" font-size="10">ズレなし（0°）</text>
+  <line x1="585" y1="260" x2="595" y2="260" stroke="rgba(255,102,102,.3)" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Phase plot inline explanation -->
+  <rect x="200" y="305" width="360" height="44" rx="8" fill="rgba(10,12,18,.85)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+  <text x="380" y="323" fill="#ff6666" font-family="'Noto Sans JP',sans-serif" font-size="11" text-anchor="middle" font-weight="600">醤油：ズレなし（0°で一直線）</text>
+  <text x="380" y="341" fill="#88ddaa" font-family="'Noto Sans JP',sans-serif" font-size="11" text-anchor="middle" font-weight="600">水道水：速く入れ替えるほど大きくズレる</text>
+
+  <!-- Freq axis - LARGE and clear -->
+  <rect x="115" y="410" width="490" height="56" rx="8" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+  <text x="355" y="428" fill="rgba(255,255,255,.8)" font-family="'Noto Sans JP',sans-serif" font-size="14" text-anchor="middle" font-weight="700">← ゆっくり入れ替える　　　　　横軸：プラスとマイナスを入れ替える速さ　　　　　速く入れ替える →</text>
+  <text x="125" y="452" fill="rgba(255,255,255,.4)" font-family="'IBM Plex Mono',monospace" font-size="11">1kHz</text>
+  <text x="280" y="452" fill="rgba(255,255,255,.4)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="middle">10kHz</text>
+  <text x="440" y="452" fill="rgba(255,255,255,.4)" font-family="'IBM Plex Mono',monospace" font-size="11" text-anchor="middle">100kHz</text>
+
+  <!-- Bottom conclusion -->
+  <rect x="115" y="478" width="490" height="36" rx="8" fill="rgba(180,136,255,.08)" stroke="rgba(180,136,255,.15)" stroke-width="1"/>
+  <text x="360" y="501" fill="rgba(220,200,255,.95)" font-family="'Noto Sans JP',sans-serif" font-size="14" text-anchor="middle" font-weight="700">このグラフの「形」が液体ごとに違う ＝ これが液体の個性</text>
+</svg>
+</div>
+
+<div class="acc" style="background:rgba(180,136,255,.06);border:1px solid rgba(180,136,255,.15)">
+<h4>🍷 実はもっと複雑——ワインの「隠れた構造」</h4>
+<p>ここまで「粒の移動する道と水が向きを変える道の1ペア」で説明しましたが、赤ワインのような複雑な液体を詳しく測ると、<b>このペアが複数重なっている</b>ことがわかります。</p>
+<p>下の図を見てください。<b>左が実際の測定データ</b>、<b>右がその分解図</b>です：</p>
+
+<!-- Side-by-side: actual measurement vs decomposition -->
+<svg viewBox="0 0 720 340" style="width:100%;max-width:720px;display:block;margin:16px auto;background:#0e1018;border-radius:12px;border:1px solid rgba(255,255,255,.07)">
+  <!-- ═══ LEFT: Actual measurement ═══ -->
+  <text x="135" y="18" fill="rgba(255,255,255,.6)" font-family="'Outfit',sans-serif" font-size="11" text-anchor="middle" font-weight="700">実測データ（赤ワイン）</text>
+
+  <!-- Axes -->
+  <line x1="45" y1="245" x2="260" y2="245" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+  <line x1="45" y1="245" x2="45" y2="28" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+
+  <!-- Grid labels -->
+  <text x="40" y="245" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">0</text>
+  <text x="40" y="200" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">-10</text>
+  <text x="40" y="155" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">-20</text>
+  <text x="40" y="110" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">-30</text>
+  <text x="40" y="65" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">-50</text>
+
+  <text x="85" y="258" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="middle">220</text>
+  <text x="155" y="258" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="middle">230</text>
+  <text x="225" y="258" fill="rgba(255,255,255,.2)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="middle">240</text>
+
+  <!-- Actual data: nearly vertical with subtle S-curves -->
+  <!-- ZRe ~240→222, ZIm 0→-55, scale: 1Ω ≈ 7px horizontal, 1Ω ≈ 4px vertical -->
+  <path d="M222,244 Q220,242 218,240 Q215,238 213,234 Q212,232 211,228 Q210,225 210,220 Q209,215 207,210 Q205,205 203,200 Q200,195 196,188 Q192,180 188,172 Q185,165 182,158 Q180,150 176,142 Q172,135 168,128 Q162,115 157,105 Q152,92 147,80 Q142,68 138,56 Q136,48 134,42" fill="none" stroke="#b488ff" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Data points -->
+  <circle cx="222" cy="244" r="2.5" fill="#b488ff"/>
+  <circle cx="218" cy="240" r="2" fill="#b488ff"/>
+  <circle cx="213" cy="234" r="2" fill="#b488ff"/>
+  <circle cx="211" cy="228" r="2" fill="#b488ff"/>
+  <circle cx="210" cy="220" r="2" fill="#b488ff"/>
+  <circle cx="207" cy="210" r="2" fill="#b488ff"/>
+  <circle cx="203" cy="200" r="2" fill="#b488ff"/>
+  <circle cx="196" cy="188" r="2" fill="#b488ff"/>
+  <circle cx="188" cy="172" r="2" fill="#b488ff"/>
+  <circle cx="180" cy="150" r="2" fill="#b488ff"/>
+  <circle cx="168" cy="128" r="2" fill="#b488ff"/>
+  <circle cx="152" cy="92" r="2" fill="#b488ff"/>
+  <circle cx="134" cy="42" r="2.5" fill="#b488ff"/>
+
+  <!-- Subtle color hints on the curve showing the 3 regions -->
+  <path d="M222,244 Q220,242 218,240 Q215,238 213,234 Q212,232 211,228" fill="none" stroke="rgba(255,100,100,.4)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M211,228 Q210,225 210,220 Q209,215 207,210 Q205,205 203,200 Q200,195 196,188" fill="none" stroke="rgba(0,212,170,.35)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M196,188 Q192,180 188,172 Q185,165 182,158 Q180,150 176,142 Q172,135 168,128 Q162,115 157,105 Q152,92 147,80 Q142,68 138,56 Q136,48 134,42" fill="none" stroke="rgba(255,204,0,.3)" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Freq annotations -->
+  <text x="230" y="243" fill="rgba(255,100,100,.6)" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="600">1kHz</text>
+  <text x="215" y="225" fill="rgba(0,212,170,.5)" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="600">4kHz</text>
+  <text x="202" y="185" fill="rgba(255,204,0,.5)" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="600">10kHz</text>
+  <text x="142" y="38" fill="rgba(180,136,255,.5)" font-family="'IBM Plex Mono',monospace" font-size="6" font-weight="600">300kHz</text>
+
+  <text x="135" y="275" fill="rgba(255,255,255,.3)" font-family="'IBM Plex Mono',monospace" font-size="8" text-anchor="middle">ZRe [Ω]</text>
+  <text x="18" y="140" fill="rgba(255,255,255,.3)" font-family="'IBM Plex Mono',monospace" font-size="8" text-anchor="middle" transform="rotate(-90,18,140)">-ZIm [Ω]</text>
+
+  <text x="135" y="292" fill="rgba(255,255,255,.2)" font-family="'Noto Sans JP',sans-serif" font-size="8" text-anchor="middle">ほぼ垂直に見えるが…</text>
+
+  <!-- ═══ ARROW → right-pointing ═══ -->
+  <text x="290" y="132" fill="rgba(255,255,255,.5)" font-family="'Noto Sans JP',sans-serif" font-size="12" text-anchor="middle" font-weight="700">分解</text>
+  <text x="290" y="148" fill="rgba(255,255,255,.5)" font-family="'Noto Sans JP',sans-serif" font-size="12" text-anchor="middle" font-weight="700">すると</text>
+  <line x1="270" y1="162" x2="330" y2="162" stroke="rgba(255,255,255,.35)" stroke-width="2.5"/>
+  <path d="M325,155 L338,162 L325,169" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ═══ RIGHT: Decomposed (exaggerated) ═══ -->
+  <text x="520" y="18" fill="rgba(255,255,255,.6)" font-family="'Outfit',sans-serif" font-size="11" text-anchor="middle" font-weight="700">分解図（各RCを横に引き伸ばして誇張）</text>
+
+  <line x1="360" y1="200" x2="695" y2="200" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+  <line x1="360" y1="200" x2="360" y2="28" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+
+  <!-- Arc 1 (1k-4kHz): smallest, rightmost -->
+  <path d="M670,200 Q660,180 648,176 Q636,174 626,184 Q620,194 615,200" fill="none" stroke="rgba(255,100,100,.3)" stroke-width="5" stroke-linecap="round"/>
+  <!-- Arc 2 (4k-10kHz): medium -->
+  <path d="M615,200 Q600,155 570,142 Q540,135 515,160 Q502,180 495,200" fill="none" stroke="rgba(0,212,170,.3)" stroke-width="5" stroke-linecap="round"/>
+  <!-- Arc 3 (10k-300kHz): largest, leftmost -->
+  <path d="M495,200 Q470,100 425,65 Q385,45 370,110 Q362,155 360,200" fill="none" stroke="rgba(255,204,0,.3)" stroke-width="5" stroke-linecap="round"/>
+  <!-- Main curve -->
+  <path d="M670,200 Q660,180 648,176 Q636,174 626,184 Q620,194 615,200 Q600,155 570,142 Q540,135 515,160 Q502,180 495,200 Q470,100 425,65 Q385,45 370,110 Q362,155 360,200" fill="none" stroke="#b488ff" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Freq labels -->
+  <text x="676" y="198" fill="rgba(255,100,100,.5)" font-family="'IBM Plex Mono',monospace" font-size="7">1kHz</text>
+  <text x="612" y="198" fill="rgba(0,212,170,.5)" font-family="'IBM Plex Mono',monospace" font-size="7">4kHz</text>
+  <text x="492" y="198" fill="rgba(255,204,0,.5)" font-family="'IBM Plex Mono',monospace" font-size="7">10kHz</text>
+  <text x="356" y="198" fill="rgba(180,136,255,.5)" font-family="'IBM Plex Mono',monospace" font-size="7" text-anchor="end">300k</text>
+
+  <text x="520" y="218" fill="rgba(255,255,255,.3)" font-family="'IBM Plex Mono',monospace" font-size="8" text-anchor="middle">ZRe [Ω]</text>
+
+  <!-- RC circuit boxes below each arc -->
+  <!-- RC1 -->
+  <g transform="translate(620,225)">
+    <rect x="-2" y="-2" width="72" height="42" rx="4" fill="rgba(255,100,100,.06)" stroke="rgba(255,100,100,.2)" stroke-width="1"/>
+    <line x1="5" y1="20" x2="12" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <polyline points="12,10 16,5 22,15 28,5 34,15 38,10" fill="none" stroke="#ff6666" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="10" x2="52" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="30" x2="24" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="24" y1="25" x2="24" y2="35" stroke="#ff6666" stroke-width="1.5"/>
+    <line x1="28" y1="25" x2="28" y2="35" stroke="#ff6666" stroke-width="1.5"/>
+    <line x1="28" y1="30" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="10" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="20" x2="65" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <text x="35" y="3" fill="rgba(255,100,100,.7)" font-family="'IBM Plex Mono',monospace" font-size="6" text-anchor="middle" font-weight="700">R1||C1</text>
+  </g>
+  <!-- RC2 -->
+  <g transform="translate(502,230)">
+    <rect x="-2" y="-2" width="72" height="42" rx="4" fill="rgba(0,212,170,.06)" stroke="rgba(0,212,170,.2)" stroke-width="1"/>
+    <line x1="5" y1="20" x2="12" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <polyline points="12,10 16,5 22,15 28,5 34,15 38,10" fill="none" stroke="#00d4aa" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="10" x2="52" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="30" x2="24" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="24" y1="25" x2="24" y2="35" stroke="#00d4aa" stroke-width="1.5"/>
+    <line x1="28" y1="25" x2="28" y2="35" stroke="#00d4aa" stroke-width="1.5"/>
+    <line x1="28" y1="30" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="10" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="20" x2="65" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <text x="35" y="3" fill="rgba(0,212,170,.7)" font-family="'IBM Plex Mono',monospace" font-size="6" text-anchor="middle" font-weight="700">R2||C2</text>
+  </g>
+  <!-- RC3 -->
+  <g transform="translate(380,235)">
+    <rect x="-2" y="-2" width="72" height="42" rx="4" fill="rgba(255,204,0,.06)" stroke="rgba(255,204,0,.2)" stroke-width="1"/>
+    <line x1="5" y1="20" x2="12" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="20" x2="12" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <polyline points="12,10 16,5 22,15 28,5 34,15 38,10" fill="none" stroke="#ffcc00" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="38" y1="10" x2="52" y2="10" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="12" y1="30" x2="24" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="24" y1="25" x2="24" y2="35" stroke="#ffcc00" stroke-width="1.5"/>
+    <line x1="28" y1="25" x2="28" y2="35" stroke="#ffcc00" stroke-width="1.5"/>
+    <line x1="28" y1="30" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="10" x2="52" y2="30" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <line x1="52" y1="20" x2="65" y2="20" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+    <text x="35" y="3" fill="rgba(255,204,0,.7)" font-family="'IBM Plex Mono',monospace" font-size="6" text-anchor="middle" font-weight="700">R3||C3</text>
+  </g>
+
+  <!-- Color-coded arrows from actual data to decomposed -->
+  <line x1="216" y1="234" x2="640" y2="190" stroke="rgba(255,100,100,.15)" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="208" y1="210" x2="555" y2="148" stroke="rgba(0,212,170,.15)" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="170" y1="135" x2="430" y2="70" stroke="rgba(255,204,0,.15)" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Bottom annotation -->
+  <text x="360" y="300" fill="rgba(255,255,255,.25)" font-family="'Noto Sans JP',sans-serif" font-size="8" text-anchor="middle">← 実測では弧が重なって「ほぼ垂直」に見えますが、数学的に分解すると複数のR||Cが見えます →</text>
+</svg>
+
+<p>ポリフェノール周辺の水、有機酸周辺の水、自由に動ける水——それぞれが異なる「水が向きを変える道」を持っていて重なっている。この複雑なパターンこそが、ワインを他の液体と区別する<b>本当の個性</b>です。</p>
+</div>
+</section>
+
+<div class="cta">
+<h3>実際に触って確かめよう</h3>
+<p style="color:var(--sub)">粒や水が動くシミュレーションで、醤油・ワイン・水道水の違いを体験できます</p>
+<a href="eis-animation.html" class="btn-sim">▶ シミュレーションで遊ぶ</a>
+<a href="eis-tutorial.html" class="btn-adv">📚 もっと詳しく知りたい方へ</a>
+</div>
+</div>
+
+<footer class="footer">DigiTaste — EIS やさしい解説</footer>
+
+<script>
+// Electrode sign animation — synced with ion CSS animation (4s period)
+function animateSigns(signL, signR, period) {
+  let phase = 0;
+  setInterval(() => {
+    phase = (phase + 50) % period;
+    const t = phase / period;
+    if (t < 0.45) {
+      signL.textContent = '＋'; signL.style.color = '#ff5555';
+      signR.textContent = '−'; signR.style.color = '#5588ff';
+    } else if (t < 0.55) {
+      signL.textContent = '~'; signL.style.color = '#888';
+      signR.textContent = '~'; signR.style.color = '#888';
+    } else {
+      signL.textContent = '−'; signL.style.color = '#5588ff';
+      signR.textContent = '＋'; signR.style.color = '#ff5555';
+    }
+  }, 50);
+}
+animateSigns(document.getElementById('signL1'), document.getElementById('signR1'), 4000);
+animateSigns(document.getElementById('signL2'), document.getElementById('signR2'), 300);
+// Large molecule section electrodes (5s period to match paths)
+animateSigns(document.getElementById('signL3'), document.getElementById('signR3'), 5000);
+
+// Free compass animation in mol stage
+const freeCompasses = document.querySelectorAll('.free-compass');
+let molPhase = 0;
+setInterval(() => {
+  molPhase = (molPhase + 50) % 5000;
+  const t = molPhase / 5000;
+  const angle = Math.sin(t * Math.PI * 2) * 30;
+  freeCompasses.forEach(c => {
+    c.style.transition = 'transform .3s ease';
+    c.style.transform = `rotate(${angle}deg)`;
+  });
+}, 50);
+
+// JS-controlled ion detour paths around molecules
+// Molecules: glucose center ~(245,63), tannin center ~(360,173)
+// Paths defined as waypoints [{x,y},...] — offsets from initial position
+// Phase1 (0-0.5): cations go RIGHT, anions go LEFT
+// Phase2 (0.5-1): reverse
+// Molecule influence zones (absolute px):
+// Glucose: x:195-325, y:20-120
+// Tannin:  x:310-440, y:130-230
+// Stage is 280px high
+const detourPaths = {
+  // di1 starts at (65,20): top row cation → goes RIGHT above glucose (must stay y<15 when x=195-325)
+  di1: [{x:0,y:0},{x:60,y:-15},{x:140,y:-18},{x:220,y:-18},{x:280,y:-12},{x:340,y:0}],
+  // di2 starts at (60,110): mid cation → dips below BOTH zones (must stay y>230 → offset>120)
+  di2: [{x:0,y:0},{x:60,y:120},{x:160,y:130},{x:260,y:130},{x:340,y:120},{x:400,y:0}],
+  // di3 starts at (70,220): bottom cation → goes along bottom below tannin (must stay y>230 → offset>10)
+  di3: [{x:0,y:0},{x:80,y:20},{x:170,y:32},{x:260,y:32},{x:340,y:20},{x:400,y:0}],
+  // di4 starts at (440,15): top row anion → LEFT above glucose (must stay y<15)
+  di4: [{x:0,y:0},{x:-60,y:-12},{x:-150,y:-15},{x:-240,y:-15},{x:-310,y:-10},{x:-370,y:0}],
+  // di5 starts at (445,130): mid anion (at tannin edge!) → dips below everything (offset>100)
+  di5: [{x:0,y:0},{x:-40,y:108},{x:-150,y:115},{x:-260,y:115},{x:-340,y:108},{x:-380,y:0}],
+  // di6 starts at (440,230): bottom anion → goes along bottom below tannin
+  di6: [{x:0,y:0},{x:-80,y:18},{x:-180,y:28},{x:-280,y:28},{x:-340,y:18},{x:-380,y:0}],
+};
+
+function lerpPath(path, t) {
+  // t: 0→1 along the path
+  const n = path.length - 1;
+  const i = Math.min(Math.floor(t * n), n - 1);
+  const frac = (t * n) - i;
+  return {
+    x: path[i].x + (path[i+1].x - path[i].x) * frac,
+    y: path[i].y + (path[i+1].y - path[i].y) * frac,
+  };
+}
+
+const detourEls = {};
+Object.keys(detourPaths).forEach(id => {
+  detourEls[id] = document.getElementById(id);
+});
+
+let dStart = performance.now();
+function animateDetour(now) {
+  const period = 5000;
+  const t = ((now - dStart) % period) / period;
+  // 0-0.5: forward, 0.5-1: reverse
+  const fwd = t < 0.5;
+  const pathT = fwd ? t * 2 : (1 - t) * 2; // 0→1 in each half
+  const eased = 0.5 - 0.5 * Math.cos(pathT * Math.PI); // ease-in-out
+
+  Object.keys(detourPaths).forEach(id => {
+    const el = detourEls[id];
+    if (!el) return;
+    const p = lerpPath(detourPaths[id], eased);
+    el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+  });
+  requestAnimationFrame(animateDetour);
+}
+requestAnimationFrame(animateDetour);
+
+// Water molecule + compass ON/OFF animation
+const waterRow = document.getElementById('waterRow');
+const efState = document.getElementById('efState');
+const N = 5; // number of pairs
+
+// Create pairs
+for (let i = 0; i < N; i++) {
+  const pair = document.createElement('div');
+  pair.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform 1.5s ease-in-out';
+  pair.className = 'water-pair';
+  pair.innerHTML = `
+    <div class="h2o" style="transition:transform 1.5s ease-in-out">
+      <div class="hh h1">H</div><div class="hh h2">H</div>
+      <div class="b1 h2o-bond"></div><div class="b2 h2o-bond"></div>
+      <div class="oo">O</div>
+    </div>
+    <div class="compass" style="transition:transform 1.5s ease-in-out">
+      <div class="compass-body"><div class="n"></div><div class="s"></div><div class="c"></div></div>
+    </div>
+  `;
+  waterRow.appendChild(pair);
+}
+
+// Cycle: ON(aligned with field) → OFF(random) → repeat
+// + electrode is on left, - electrode on right
+// H₂O: H(+) is at top, O(-) is at bottom in default orientation
+// Field goes from + to - (left→right), so H(+) should point RIGHT → rotate(90deg)
+// Compass: red needle(+) at top in default → should also point RIGHT → rotate(90deg)
+let isOn = true;
+const signLW = document.getElementById('signLW');
+const signRW = document.getElementById('signRW');
+function cycleWater() {
+  const pairs = document.querySelectorAll('.water-pair');
+  if (isOn) {
+    efState.textContent = '電極 ON →';
+    efState.style.color = 'rgba(254,80,80,.7)';
+    signLW.textContent = '＋'; signLW.style.color = '#ff5555';
+    signRW.textContent = '−'; signRW.style.color = '#5588ff';
+    pairs.forEach(p => {
+      // Align: H(+) points toward - electrode (right) = 90deg clockwise
+      // Add slight random variation (±8deg) for natural look
+      const aligned = 90 + (Math.random() - 0.5) * 16;
+      p.querySelector('.h2o').style.transform = `rotate(${aligned}deg)`;
+      p.querySelector('.compass').style.transform = `rotate(${aligned}deg)`;
+    });
+  } else {
+    efState.textContent = '電極 OFF';
+    efState.style.color = 'rgba(255,255,255,.3)';
+    signLW.textContent = ''; signRW.textContent = '';
+    pairs.forEach(p => {
+      const angle = (Math.random() - 0.5) * 360;
+      p.querySelector('.h2o').style.transform = `rotate(${angle}deg)`;
+      p.querySelector('.compass').style.transform = `rotate(${angle}deg)`;
+    });
+  }
+  isOn = !isOn;
+  setTimeout(cycleWater, 2500);
+}
+cycleWater();
+</script>
+
+
+<div style="position:fixed;bottom:24px;right:24px;z-index:1000">
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:#fe0808;color:#fff;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;padding:12px 22px;border-radius:10px;text-decoration:none;box-shadow:0 4px 20px rgba(254,8,8,.3);transition:all .3s">← トップに戻る</a>
+</div>
+</body>
+</html>

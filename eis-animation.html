@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIS — 電気インピーダンス分光法の原理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b0d13;--panel:#11131b;--card:#171a24;
+  --border:rgba(255,255,255,0.06);--text:#f0f0f8;--muted:#a0a0bc;--dim:#6a6a8a;
+  --red:#fe0808;--blue:#4488ff;--anion:#ff6655;
+  --water-free:#00d4aa;--water-bound:#5a9888;
+  --large:#ffcc00;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+.header{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header h1{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:-.02em}
+.header h1 span{color:var(--red)}
+.header-sub{font-size:.62rem;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+
+/* Main grid */
+.main{flex:1;display:grid;grid-template-columns:1fr 440px;grid-template-rows:1fr 320px;min-height:0}
+.canvas-area{position:relative;overflow:hidden;grid-column:1;grid-row:1}
+canvas{display:block;width:100%;height:100%}
+
+.freq-overlay{position:absolute;top:12px;left:12px;display:flex;gap:6px}
+.freq-btn{font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:700;padding:10px 18px;border-radius:8px;border:2px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer;transition:all .2s}
+.freq-btn:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+.freq-btn.active{background:rgba(254,8,8,.15);border-color:var(--red);color:var(--red)}
+
+.efield-overlay{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--dim);background:rgba(11,13,19,.85);padding:8px 14px;border-radius:8px;border:1px solid var(--border)}
+.efield-arrow{font-size:1.3rem;min-width:20px;text-align:center}
+
+/* Side panel */
+.side{grid-column:2;grid-row:1/3;background:var(--panel);border-left:1px solid var(--border);padding:20px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;font-size:.85rem}
+.side h3{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+
+/* Legend */
+.leg-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+.leg-row .d{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.leg-row span{font-size:.78rem;color:rgba(255,255,255,.7)}
+
+/* Presets */
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pre-btn{font-family:'Noto Sans JP',sans-serif;font-size:1rem;font-weight:700;padding:12px 20px;border-radius:10px;border:2px solid var(--border);background:var(--card);color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;position:relative}
+.pre-btn:hover{border-color:var(--pc);color:var(--pc)}
+.pre-btn.active{background:color-mix(in srgb,var(--pc) 15%,transparent);border-color:var(--pc);color:var(--pc)}
+.pre-btn::before{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--pc);margin-right:8px;vertical-align:middle}
+
+/* Sliders */
+.sl-group{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.sl-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sl-row:last-child{margin-bottom:0}
+.sl-row .d{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.sl-row label{font-family:'IBM Plex Mono',monospace;font-size:.88rem;color:rgba(255,255,255,.75);min-width:75px;font-weight:600}
+.sl-row input[type=range]{flex:1;-webkit-appearance:none;height:6px;background:var(--border);border-radius:3px;outline:none}
+.sl-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--red);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+.sl-row .sl-val{font-family:'IBM Plex Mono',monospace;font-size:.88rem;color:var(--text);min-width:32px;text-align:right;font-weight:700}
+.sl-desc{font-size:.72rem;color:rgba(255,255,255,.7);line-height:1.5;padding:0 0 10px 30px;margin-top:-2px}
+.sl-desc strong{color:rgba(255,255,255,.95);font-weight:700}
+.sl-extra{}
+
+/* Impedance readout */
+.z-readout{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
+.z-readout h4{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.05em;margin-bottom:6px;font-weight:600}
+.z-row{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:.85rem;margin-bottom:4px}
+.z-row .zl{color:rgba(255,255,255,.6)}.z-row .zv{color:#fff;font-weight:700;font-size:.95rem}
+
+.spd{display:flex;align-items:center;gap:8px}
+.spd label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.5);white-space:nowrap;font-weight:600}
+.spd input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--border);border-radius:2px;outline:none}
+.spd input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--red);cursor:pointer}
+
+/* Bottom plot strip */
+.plots{grid-column:1;grid-row:2;display:grid;grid-template-columns:1fr 1.8fr 1fr;border-top:1px solid var(--border);background:var(--bg)}
+.plot-sec{position:relative;overflow:hidden;border-right:1px solid var(--border)}
+.plot-sec:last-child{border-right:none}
+.plot-sec canvas{display:block;width:100%;height:100%}
+.plot-lbl{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.2);letter-spacing:.04em;z-index:1;pointer-events:none;font-weight:500;white-space:nowrap}
+
+@media(max-width:860px){.main{grid-template-columns:1fr;grid-template-rows:1fr 260px}.side{display:none}.plots{grid-column:1}.efield-overlay{right:12px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>EIS</span> 電気インピーダンス分光法</h1>
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="header-sub">4-Electrode Bulk Impedance · Particle Simulation</span>
+    <a href="eis-beginner.html" style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:700;color:#ffaa22;text-decoration:none;padding:5px 14px;border:1.5px solid rgba(255,180,0,.3);border-radius:6px;background:rgba(255,180,0,.08)">🔰 やさしい解説</a>
+    <a href="eis-tutorial.html" style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:700;color:var(--red);text-decoration:none;padding:5px 14px;border:1.5px solid rgba(254,8,8,.3);border-radius:6px;background:rgba(254,8,8,.08)">📖 詳しい解説</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="canvas-area">
+    <canvas id="sim"></canvas>
+    <div class="freq-overlay">
+      <button class="freq-btn" onclick="setMode('off',this)">OFF</button>
+      <button class="freq-btn" onclick="setMode('dc',this)">DC</button>
+      <button class="freq-btn active" onclick="setMode('1k',this)">1k</button>
+      <button class="freq-btn" onclick="setMode('10k',this)">10k</button>
+      <button class="freq-btn" onclick="setMode('100k',this)">100k</button>
+      <button class="freq-btn" id="sweepBtn" onclick="toggleSweep()" style="margin-left:8px;border-color:rgba(255,180,0,.4);color:rgba(255,180,0,.7)">▶ Sweep</button>
+    </div>
+    <div class="efield-overlay">
+      <span>E</span>
+      <span class="efield-arrow" id="eA">→</span>
+      <span id="eL" style="min-width:30px">+1.0</span>
+    </div>
+  </div>
+
+  <div class="side">
+    <!-- Presets + Sliders with integrated legend & behavior -->
+    <div>
+      <h3>溶液の組成（プリセット）</h3>
+      <div class="presets">
+        <button class="pre-btn" style="--pc:#ff4444" onclick="setPreset('shoyu',this)">醤油</button>
+        <button class="pre-btn" style="--pc:#44bbff" onclick="setPreset('su',this)">穀物酢</button>
+        <button class="pre-btn" style="--pc:#ffaa22" onclick="setPreset('mirin',this)">みりん</button>
+        <button class="pre-btn" style="--pc:#88ddaa" onclick="setPreset('water',this)">水道水</button>
+        <button class="pre-btn active" style="--pc:#fe0808" onclick="setPreset('wine',this)">赤ワイン</button>
+      </div>
+      <div class="sl-group">
+        <div class="sl-row"><div class="d" style="background:#4488ff"></div><label>カチオン</label><input type="range" id="slCat" min="20" max="300" value="120" oninput="onSlider()"><span class="sl-val" id="vCat">120</span></div>
+        <div class="sl-desc">Na⁺, H⁺ — 電場方向にドリフト。<span id="bI">大きく移動し迂回。</span> イオン↑ → <strong>Rb↓</strong></div>
+
+        <div class="sl-row"><div class="d" style="background:#ff6655"></div><label>アニオン</label><input type="range" id="slAni" min="20" max="300" value="110" oninput="onSlider()"><span class="sl-val" id="vAni">110</span></div>
+        <div class="sl-desc">Cl⁻ — カチオンと逆方向。イオン↑ → <strong>Rb↓</strong></div>
+
+        <div class="sl-row"><div class="d" style="background:#00d4aa"></div><label>自由水</label><input type="range" id="slWat" min="5" max="80" value="38" oninput="onSlider()"><span class="sl-val" id="vWat">38</span></div>
+        <div class="sl-desc">H₂O — <span id="bWf">常に完全配向 (Debye ~17GHz)</span>。自由水↑ → <strong>Cb↑</strong></div>
+
+        <div class="sl-row"><div class="d" style="background:#ffcc00"></div><label>大型分子</label><input type="range" id="slLrg" min="0" max="12" value="10" oninput="onSlider()"><span class="sl-val" id="vLrg">10</span></div>
+        <div class="sl-desc">タンニン/グルコース等 — <span id="bL">高周波で追従不能</span>。大型分子↑ → <strong>Rb↑ Cb↓</strong></div>
+
+        <div class="sl-extra">
+          <div class="sl-desc" style="margin-top:4px;padding-top:4px;border-top:1px solid var(--border)">
+            <span style="color:#5a9888">●</span> 束縛水 — <span id="bWb">水和殻で配向凍結</span>（大型分子に自動付随）
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic impedance readout with circuit diagram -->
+    <div class="z-readout" id="zReadout">
+      <h4>等価回路（Rb || Cb）</h4>
+      <svg viewBox="0 0 280 90" style="width:100%;height:auto;display:block;margin:4px 0 8px">
+        <!-- Wires -->
+        <line x1="10" y1="45" x2="60" y2="45" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="60" y1="45" x2="60" y2="20" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="60" y1="45" x2="60" y2="70" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="200" y1="20" x2="200" y2="70" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="200" y1="45" x2="270" y2="45" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <!-- Rb (top branch) — resistor zigzag -->
+        <polyline points="80,20 85,12 95,28 105,12 115,28 125,12 135,28 145,12 150,20" fill="none" stroke="#fe0808" stroke-width="2" stroke-linecap="round"/>
+        <line x1="60" y1="20" x2="80" y2="20" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="150" y1="20" x2="200" y2="20" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <text x="115" y="8" fill="#fe0808" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="700" text-anchor="middle" id="svgRb">Rb</text>
+        <!-- Cb (bottom branch) — capacitor -->
+        <line x1="60" y1="70" x2="110" y2="70" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <line x1="110" y1="56" x2="110" y2="84" stroke="#00d4aa" stroke-width="2.5"/>
+        <line x1="122" y1="56" x2="122" y2="84" stroke="#00d4aa" stroke-width="2.5"/>
+        <line x1="122" y1="70" x2="200" y2="70" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+        <text x="116" y="52" fill="#00d4aa" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="700" text-anchor="middle" id="svgCb">Cb</text>
+        <!-- Terminal dots -->
+        <circle cx="10" cy="45" r="3" fill="rgba(255,255,255,.5)"/>
+        <circle cx="270" cy="45" r="3" fill="rgba(255,255,255,.5)"/>
+        <!-- Terminal labels -->
+        <text x="10" y="38" fill="rgba(255,255,255,.3)" font-family="IBM Plex Mono,monospace" font-size="8" text-anchor="middle">Z</text>
+      </svg>
+      <div class="z-row"><span class="zl">Rb (バルク抵抗)</span><span class="zv" id="zRb">210 Ω</span></div>
+      <div class="z-row"><span class="zl">Cb (バルク容量)</span><span class="zv" id="zCb">500 pF</span></div>
+    </div>
+
+    <div class="spd">
+      <label>SPEED</label>
+      <input type="range" id="spd" min="0.2" max="3" step="0.1" value="1">
+    </div>
+  </div>
+
+  <!-- Bottom plots -->
+  <div class="plots">
+    <div class="plot-sec">
+      <span class="plot-lbl">印加 &amp; 応答</span>
+      <canvas id="wv"></canvas>
+    </div>
+    <div class="plot-sec">
+      <span class="plot-lbl">Bode線図</span>
+      <canvas id="bode"></canvas>
+    </div>
+    <div class="plot-sec">
+      <span class="plot-lbl">Nyquist線図</span>
+      <canvas id="nyq"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const C=document.getElementById('sim'),X=C.getContext('2d');
+const WC=document.getElementById('wv'),WX=WC.getContext('2d');
+const BC=document.getElementById('bode'),BX=BC.getContext('2d');
+const NC=document.getElementById('nyq'),NX=NC.getContext('2d');
+let W,H,dpr,time=0,spd=1;
+let mode='1k';
+function getFreq(){return mode==='off'?0:mode==='dc'?0:mode==='1k'?1000:mode==='10k'?10000:100000}
+document.getElementById('spd').oninput=e=>{spd=+e.target.value};
+
+function resizeCanvas(cv,cx){
+  const p=cv.parentElement;
+  cv.width=p.clientWidth*dpr;cv.height=p.clientHeight*dpr;
+  cv.style.width=p.clientWidth+'px';cv.style.height=p.clientHeight+'px';
+  cx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function resize(){
+  dpr=devicePixelRatio||1;
+  const a=C.parentElement;W=a.clientWidth;H=a.clientHeight;
+  C.width=W*dpr;C.height=H*dpr;C.style.width=W+'px';C.style.height=H+'px';
+  X.setTransform(dpr,0,0,dpr,0,0);
+  resizeCanvas(WC,WX);
+  resizeCanvas(BC,BX);
+  resizeCanvas(NC,NX);
+}
+addEventListener('resize',resize);resize();
+
+const EW=30; // electrode width
+function eX(){return{l:40,r:W-40}}
+
+// ═══ Particle system ═══
+const P=[];
+let ionList=[]; // pre-filtered ion array for O(n²) Coulomb
+
+function dist(a,b){const dx=a.x-b.x,dy=a.y-b.y;return Math.sqrt(dx*dx+dy*dy)}
+
+class Pt{
+  constructor(type,forceX,forceY){
+    this.type=type;
+    const e=eX();
+    const innerL=e.l+EW+20, innerR=e.r-EW-20;
+    this.homeX=forceX!=null?forceX:( innerL+Math.random()*(innerR-innerL) );
+    this.homeY=forceY!=null?forceY:( 50+Math.random()*(H-100) );
+    this.x=this.homeX;this.y=this.homeY;
+    this.vx=0;this.vy=0; // velocity for force-based motion
+    this.angle=Math.random()*Math.PI*2;
+    this.bpx=Math.random()*100;this.bpy=Math.random()*100;
+    this.proxFactor=1; // 1=free, 0=fully blocked
+    this.parentMol=null; // for bound water: ref to large molecule
+
+    if(type==='cation'){
+      this.r=5+Math.random()*2;this.charge=1;this.col='#4488ff';this.glow='rgba(68,136,255,.25)';
+      this.label=Math.random()>.5?'Na⁺':'H⁺';this.mob=.88+Math.random()*.12;
+      this.drag=2.5+Math.random()*1;
+    }else if(type==='anion'){
+      this.r=6+Math.random()*2;this.charge=-1;this.col='#ff6655';this.glow='rgba(255,102,85,.25)';
+      this.label='Cl⁻';this.mob=.82+Math.random()*.1;
+      this.drag=2.2+Math.random()*1;
+    }else if(type==='water'){
+      this.r=11+Math.random()*2;this.charge=0;this.col='#00d4aa';this.glow='rgba(0,212,170,.2)';
+      this.label='H₂O';this.mob=.12;this.rotResp=.95;
+    }else if(type==='bound'){
+      // bound water - created near a large molecule
+      this.r=10+Math.random()*1.5;this.charge=0;this.col='#5a9888';this.glow='rgba(90,152,136,.15)';
+      this.label='H₂O';this.mob=.02;this.rotResp=0.05; // barely rotates
+    }else if(type==='large'){
+      this.r=46+Math.random()*14;this.charge=0;this.col='#ffcc00';this.glow='rgba(255,204,0,.2)';
+      this.label=currentMolLabels[Math.random()>.5?0:1]||'大型分子';this.mob=.02;
+      this.rotResp=.2; // only at low freq
+      this.rotCutoff=4; // kHz-normalized cutoff
+    }
+  }
+
+  update(dt,ef){
+    const fn=getFreq()/1000; // 1@1kHz, 100@100kHz
+
+    // ─ Proximity to large molecules (for non-large) ─
+    // ─ Proximity factor (soft influence zone — does NOT move particle) ─
+    if(this.type!=='large'&&this.type!=='bound'){
+      this.proxFactor=1;
+      for(const o of P){
+        if(o.type!=='large')continue;
+        const d=dist(this,o);
+        const inf=o.r*2.2;
+        if(d<inf){
+          const c=1-d/inf;
+          this.proxFactor=Math.min(this.proxFactor, .2+.8*(1-c*c));
+        }
+      }
+    }
+
+    // ─ Bound water: stay near parent molecule ─
+    if(this.type==='bound'&&this.parentMol){
+      const pm=this.parentMol;
+      const d=dist(this,pm);
+      const targetDist=pm.r+this.r+4;
+      if(d>targetDist+8){
+        const a2=Math.atan2(this.y-pm.y,this.x-pm.x);
+        const td=targetDist+3+Math.sin(this.bpx)*3;
+        const tx=pm.x+Math.cos(a2)*td;
+        const ty=pm.y+Math.sin(a2)*td;
+        this.x+=(tx-this.x)*dt*4;
+        this.y+=(ty-this.y)*dt*4;
+      }
+      // Bound water angle: points TOWARD parent molecule (H-bond orientation)
+      // NOT toward E-field. Very slight wobble only.
+      const toParent=Math.atan2(pm.y-this.y,pm.x-this.x);
+      const wobble=ef*0.05*this.rotResp; // tiny wobble from field
+      let target=toParent+wobble;
+      let ad=target-this.angle;
+      while(ad>Math.PI)ad-=2*Math.PI;
+      while(ad<-Math.PI)ad+=2*Math.PI;
+      this.angle+=ad*Math.min(1,dt*5);
+      
+      // minimal brownian
+      this.bpx+=dt*1.5;this.bpy+=dt*1.5;
+      this.x+=Math.sin(this.bpx*2.3)*.08*dt*20;
+      this.y+=Math.cos(this.bpy*2.7)*.08*dt*20;
+      return; // skip normal physics
+    }
+
+    // ─ Ion translation: force-based drift ─
+    if(this.charge!==0){
+      // === 1) External E-field force ===
+      // Screened by ions already near the electrode
+      // Count same-sign ions closer to the target electrode to estimate screening
+      const e=eX();
+      const fieldDir=ef>0?1:-1; // +1 = field points right
+      const targetElecX=this.charge*fieldDir>0?e.r-EW:e.l+EW; // electrode this ion moves toward
+      // Screening: only relevant in DC where ions accumulate at electrode
+      // In AC, field reverses too fast for screening layer to form
+      let screenFactor=1;
+      if(mode==='dc'){
+        let screenCount=0;
+        for(let ii=0;ii<ionList.length;ii++){
+          const o=ionList[ii];
+          if(o===this)continue;
+          if(o.charge===this.charge){
+            const myDist=Math.abs(this.x-targetElecX);
+            const oDist=Math.abs(o.x-targetElecX);
+            if(oDist<myDist) screenCount++;
+          }
+        }
+        screenFactor=1/(1+screenCount*0.3);
+      }
+      const force=this.charge*ef*this.mob*W*10*this.proxFactor*screenFactor;
+      this.vx+=force*dt;
+
+      // === 2) Coulomb interaction between ions ===
+      // DC: very strong repulsion for double layer
+      // AC: moderate, but opposite-sign attraction must prevent diffusion
+      const coulombStr = mode==='dc' ? 120000 : 12000;
+      const coulombCut = mode==='dc' ? 150 : 70;
+      const cut2=coulombCut*coulombCut;
+      for(let ii=0;ii<ionList.length;ii++){
+        const o=ionList[ii];
+        if(o===this)continue;
+        const dx=this.x-o.x, dy=this.y-o.y;
+        const d2=dx*dx+dy*dy;
+        if(d2>cut2||d2<1)continue;
+        const d=Math.sqrt(d2);
+        const minD=this.r+o.r+1;
+        // Same sign: repel. Opposite sign: attract (maintains charge neutrality)
+        const sameSign=this.charge*o.charge>0?1:-0.5;
+        const strength=sameSign*coulombStr/(d2+60);
+        this.vx+=dx/d*strength*dt;
+        this.vy+=dy/d*strength*dt;
+        if(d<minD){
+          const overlap=(minD-d)*0.5;
+          this.x+=dx/d*overlap;
+          this.y+=dy/d*overlap;
+        }
+      }
+
+      // === 3) Viscous drag — mode & frequency adaptive ===
+      const isAC = mode==='1k'||mode==='10k'||mode==='100k';
+      // Higher freq → higher effective drag (ions can't build momentum)
+      let effDrag;
+      if(mode==='100k') effDrag=this.drag*6;
+      else if(mode==='10k') effDrag=this.drag*3;
+      else if(isAC) effDrag=this.drag;
+      else effDrag=this.drag*4; // DC/OFF
+      this.vx*=Math.exp(-effDrag*dt);
+      this.vy*=Math.exp(-effDrag*dt);
+      
+      // Brownian kicks — must be proportional to how much ions actually move
+      // 100kHz: essentially frozen, only micro-tremor
+      let brownScale;
+      if(mode==='dc') brownScale=8;
+      else if(mode==='off') brownScale=15;
+      else if(mode==='1k') brownScale=80;
+      else if(mode==='10k') brownScale=15;
+      else brownScale=2; // 100kHz — nearly zero
+      this.vx+=(Math.random()-.5)*brownScale*dt;
+      this.vy+=(Math.random()-.5)*brownScale*dt;
+      
+      // === 4) Restoring force toward home position ===
+      // At high freq, time-averaged displacement is zero → strong restoration
+      // At low freq, ions genuinely traverse → weak/no restoration
+      let restoreStr;
+      if(mode==='100k') restoreStr=8;
+      else if(mode==='10k') restoreStr=1.5;
+      else if(mode==='1k') restoreStr=0.02;
+      else restoreStr=0; // DC/OFF: no artificial restore
+      if(restoreStr>0){
+        this.vx+=(this.homeX-this.x)*restoreStr*dt;
+        this.vy+=(this.homeY-this.y)*restoreStr*dt;
+      }
+
+      // Velocity clamp — tighter for high freq
+      const maxV = mode==='100k' ? 30 : (mode==='10k' ? 150 : (isAC ? 600 : 200));
+      const spd2=this.vx*this.vx+this.vy*this.vy;
+      if(spd2>maxV*maxV){
+        const s=maxV/Math.sqrt(spd2);
+        this.vx*=s;this.vy*=s;
+      }
+      
+      // Apply velocity
+      this.x+=this.vx*dt;
+      this.y+=this.vy*dt;
+    }else if(this.type==='water'){
+      // Free water: very slight drift, mostly rotational response
+      // Gentle brownian wander, no homeX spring
+      this.bpx+=dt*(2+Math.random());this.bpy+=dt*(2+Math.random());
+      this.x+=Math.sin(this.bpx*3.1)*.3*dt*20;
+      this.y+=Math.cos(this.bpy*3.7)*.3*dt*20;
+      // Very weak centering to prevent all water drifting to edges
+      this.x+=(this.homeX-this.x)*dt*.15;
+      this.y+=(this.homeY-this.y)*dt*.15;
+    }else if(this.type==='large'){
+      // Large: nearly stationary, very slow response
+      const lf=1/(1+Math.pow(fn/3,1.5));
+      this.x+=(this.homeX+ef*this.mob*4*lf-this.x)*dt*1;
+      this.y+=(this.homeY-this.y)*dt*.3;
+    }
+
+    // ─ Rotation ─
+    if(this.type==='water'){
+      // FREE water: Debye ~17GHz → ALWAYS fully tracks E-field in EIS range
+      // proxFactor reduces it near large molecules
+      // When field is ~0, no torque — random drift only
+      const absEf=Math.abs(ef);
+      if(absEf>0.02){
+        const rr=this.rotResp*this.proxFactor;
+        const fa=ef>0?0:Math.PI;
+        const ta=fa*rr+this.angle*(1-rr);
+        let ad=ta-this.angle;
+        while(ad>Math.PI)ad-=2*Math.PI;
+        while(ad<-Math.PI)ad+=2*Math.PI;
+        this.angle+=ad*Math.min(1,dt*16*absEf);
+      }else{
+        // No field — slow random rotation
+        this.angle+=(Math.random()-.5)*dt*2;
+      }
+    }else if(this.type==='large'){
+      const absEf=Math.abs(ef);
+      if(absEf>0.02){
+        const rr=this.rotResp/(1+Math.pow(fn/this.rotCutoff,2));
+        const fa=ef>0?0:Math.PI;
+        const ta=fa*rr+this.angle*(1-rr);
+        let ad=ta-this.angle;
+        while(ad>Math.PI)ad-=2*Math.PI;
+        while(ad<-Math.PI)ad+=2*Math.PI;
+        this.angle+=ad*Math.min(1,dt*4*absEf);
+      }else{
+        this.angle+=(Math.random()-.5)*dt*.3;
+      }
+    }
+
+    // Brownian for large molecules only (ions/water handled above)
+    if(this.type==='large'){
+      this.bpx+=dt*1.5;this.bpy+=dt*1.5;
+      this.x+=Math.sin(this.bpx*2.3)*.06*dt*20;
+      this.y+=Math.cos(this.bpy*2.7)*.06*dt*20;
+    }
+
+    // Boundaries — ions bounce off electrodes, others clamp
+    const e=eX();
+    const mx=e.l+EW+this.r+6,Mx=e.r-EW-this.r-6;
+    const my=35+this.r,My=H-35-this.r;
+    if(this.charge!==0){
+      // DC: ions stick to electrode (zero restitution)
+      // AC: small bounce. OFF: small bounce (coasting)
+      const restitution = mode==='dc' ? 0 : 0.1;
+      if(this.x<mx){this.x=mx;this.vx=Math.abs(this.vx)*restitution;}
+      if(this.x>Mx){this.x=Mx;this.vx=-Math.abs(this.vx)*restitution;}
+      if(this.y<my){this.y=my;this.vy=Math.abs(this.vy)*restitution;}
+      if(this.y>My){this.y=My;this.vy=-Math.abs(this.vy)*restitution;}
+    }else{
+      this.x=Math.max(mx,Math.min(Mx,this.x));
+      this.y=Math.max(my,Math.min(My,this.y));
+    }
+  }
+
+  draw(){
+    X.save();X.translate(this.x,this.y);
+
+    const constrained=this.proxFactor!==undefined&&this.proxFactor<.65&&this.type!=='large'&&this.type!=='bound';
+
+    // Glow (skip for ions — too many)
+    if(this.type!=='cation'&&this.type!=='anion'){
+      X.beginPath();X.arc(0,0,this.r+(this.type==='large'?14:7),0,Math.PI*2);
+      X.fillStyle=constrained?'rgba(255,140,0,.12)':this.glow;X.fill();
+    }
+
+    // Constraint ring
+    if(constrained&&this.type!=='cation'&&this.type!=='anion'){
+      X.beginPath();X.arc(0,0,this.r+3,0,Math.PI*2);
+      X.strokeStyle=`rgba(255,140,0,${.5*(1-this.proxFactor)})`;X.lineWidth=1.2;
+      X.setLineDash([2,3]);X.stroke();X.setLineDash([]);
+    }
+
+    // Dim constrained free particles
+    if(constrained)X.globalAlpha=.5+.5*this.proxFactor;
+
+    if(this.charge!==0){
+      // ION — simple filled circle + minimal label
+      X.beginPath();X.arc(0,0,this.r,0,Math.PI*2);X.fillStyle=this.col;X.fill();
+      X.fillStyle='#fff';X.font=`600 ${Math.max(7,this.r*.95)}px 'IBM Plex Mono',monospace`;
+      X.textAlign='center';X.textBaseline='middle';X.fillText(this.label,0,.5);
+
+    }else if(this.type==='water'||this.type==='bound'){
+      X.rotate(this.angle);
+      const isBound=this.type==='bound';
+
+      // O atom
+      X.beginPath();X.arc(0,0,this.r*.6,0,Math.PI*2);
+      X.fillStyle=isBound?'#5a9888':this.col;X.fill();
+
+      // H atoms
+      const hr=this.r*.25;
+      X.beginPath();X.arc(this.r*.7,-this.r*.42,hr,0,Math.PI*2);
+      X.fillStyle=isBound?'#7aaa9a':'#66ffdd';X.fill();
+      X.beginPath();X.arc(this.r*.7,this.r*.42,hr,0,Math.PI*2);
+      X.fillStyle=isBound?'#7aaa9a':'#66ffdd';X.fill();
+
+      // Labels
+      X.fillStyle=isBound?'rgba(200,220,215,.5)':'rgba(255,255,255,.55)';
+      X.font=`600 ${this.r*.22}px 'IBM Plex Mono',monospace`;X.textAlign='center';X.textBaseline='middle';
+      X.fillText('O',0,0);
+      X.font=`600 ${this.r*.18}px 'IBM Plex Mono',monospace`;
+      X.fillText('H',this.r*.7,-this.r*.42);
+      X.fillText('H',this.r*.7,this.r*.42);
+
+      // Dipole arrow (fainter for bound)
+      const aa=isBound?.15:.3;
+      X.beginPath();X.moveTo(-this.r*.2,0);X.lineTo(this.r*.4,0);
+      X.strokeStyle=`rgba(255,255,255,${aa})`;X.lineWidth=1.2;X.stroke();
+      X.beginPath();X.moveTo(this.r*.4,0);X.lineTo(this.r*.28,-2.5);X.lineTo(this.r*.28,2.5);
+      X.fillStyle=`rgba(255,255,255,${aa})`;X.fill();
+
+      // Bound water: H-bond indicator
+      if(isBound){
+        X.rotate(-this.angle); // back to world space
+        X.fillStyle='rgba(255,180,80,.7)';
+        X.font=`700 ${this.r*.4}px 'Noto Sans JP',sans-serif`;
+        X.textAlign='center';X.textBaseline='middle';
+        X.fillText('束縛',0,-this.r-7);
+      }
+
+    }else if(this.type==='large'){
+      X.rotate(this.angle);
+
+      // Body
+      X.beginPath();X.ellipse(0,0,this.r,this.r*.55,0,0,Math.PI*2);
+      X.fillStyle=this.col;X.globalAlpha=.75;X.fill();X.globalAlpha=1;
+
+      // Border
+      X.beginPath();X.ellipse(0,0,this.r,this.r*.55,0,0,Math.PI*2);
+      X.strokeStyle='rgba(180,140,0,.4)';X.lineWidth=1.5;X.stroke();
+
+      // Name
+      X.fillStyle='rgba(80,50,0,.85)';
+      X.font=`700 ${this.r*.22}px 'IBM Plex Mono',monospace`;
+      X.textAlign='center';X.textBaseline='middle';
+      X.fillText(this.label,0,-2);
+
+      // Dipole
+      X.fillStyle='rgba(80,50,0,.55)';
+      X.font=`bold ${this.r*.18}px 'IBM Plex Mono',monospace`;
+      X.fillText('δ+',this.r*.6,this.r*.18);
+      X.fillText('δ−',-this.r*.6,this.r*.18);
+
+      // Dipole arrow
+      X.beginPath();X.moveTo(-this.r*.35,this.r*.18);X.lineTo(this.r*.35,this.r*.18);
+      X.strokeStyle='rgba(80,50,0,.35)';X.lineWidth=1.8;X.stroke();
+      X.beginPath();X.moveTo(this.r*.35,this.r*.18);
+      X.lineTo(this.r*.26,this.r*.18-4);X.lineTo(this.r*.26,this.r*.18+4);
+      X.fillStyle='rgba(80,50,0,.35)';X.fill();
+    }
+
+    X.restore();
+  }
+}
+
+// ═══ Create particles ═══
+function init(){
+  P.length=0;
+  const largeMols=[];
+  for(let i=0;i<nLrg;i++){
+    const e=eX();
+    let lx,ly,ok;
+    for(let t=0;t<80;t++){
+      lx=e.l+EW+70+Math.random()*(e.r-EW-e.l-EW-140);
+      ly=70+Math.random()*(H-140);
+      ok=true;
+      for(const lm of largeMols){
+        if(Math.sqrt((lx-lm.x)**2+(ly-lm.y)**2)<120){ok=false;break}
+      }
+      if(ok)break;
+    }
+    const lm=new Pt('large',lx,ly);
+    P.push(lm);largeMols.push(lm);
+  }
+  for(const lm of largeMols){
+    const nb=5+Math.floor(Math.random()*3);
+    for(let i=0;i<nb;i++){
+      const a=Math.PI*2*i/nb+Math.random()*.3;
+      const d=lm.r+14+Math.random()*4;
+      const bw=new Pt('bound',lm.x+Math.cos(a)*d,lm.y+Math.sin(a)*d);
+      bw.parentMol=lm;bw.angle=Math.atan2(lm.y-bw.y,lm.x-bw.x);
+      P.push(bw);
+    }
+  }
+  for(let i=0;i<nWat;i++)P.push(new Pt('water'));
+  for(let i=0;i<nCat;i++)P.push(new Pt('cation'));
+  for(let i=0;i<nAni;i++)P.push(new Pt('anion'));
+}
+
+// ═══ Drawing helpers ═══
+function drawElectrodes(ef){
+  const e=eX();
+  const lc=ef>0?`rgba(255,${100-ef*60|0},${100-ef*60|0},.85)`:`rgba(${100+ef*60|0},${100+ef*60|0},255,.85)`;
+  const rc=ef>0?`rgba(${100+ef*60|0},${100+ef*60|0},255,.85)`:`rgba(255,${100+ef*60|0},${100+ef*60|0},.85)`;
+
+  // Electrodes
+  X.fillStyle=lc;X.beginPath();X.roundRect(e.l,16,EW,H-32,[3]);X.fill();
+  X.fillStyle=rc;X.beginPath();X.roundRect(e.r-EW,16,EW,H-32,[3]);X.fill();
+
+  // Glow
+  let g=X.createLinearGradient(e.l+EW,0,e.l+EW+50,0);
+  g.addColorStop(0,ef>0?'rgba(255,50,50,.08)':'rgba(50,50,255,.08)');g.addColorStop(1,'transparent');
+  X.fillStyle=g;X.fillRect(e.l+EW,16,50,H-32);
+  g=X.createLinearGradient(e.r-EW,0,e.r-EW-50,0);
+  g.addColorStop(0,ef>0?'rgba(50,50,255,.08)':'rgba(255,50,50,.08)');g.addColorStop(1,'transparent');
+  X.fillStyle=g;X.fillRect(e.r-EW-50,16,50,H-32);
+
+  // Labels
+  X.save();X.translate(e.l+EW/2,H/2);X.rotate(-Math.PI/2);
+  X.fillStyle='rgba(255,255,255,.55)';X.font="600 9px 'IBM Plex Mono',monospace";X.textAlign='center';
+  X.fillText('ELECTRODE',0,0);X.restore();
+  X.save();X.translate(e.r-EW/2,H/2);X.rotate(-Math.PI/2);
+  X.fillStyle='rgba(255,255,255,.55)';X.font="600 9px 'IBM Plex Mono',monospace";X.textAlign='center';
+  X.fillText('ELECTRODE',0,0);X.restore();
+
+  // +/- signs
+  X.font="bold 15px 'IBM Plex Mono',monospace";X.textAlign='center';X.textBaseline='middle';
+  X.fillStyle='rgba(255,255,255,.65)';
+  X.fillText(ef>0?'+':'−',e.l+EW/2,36);
+  X.fillText(ef>0?'−':'+',e.r-EW/2,36);
+}
+
+function drawFieldLines(ef){
+  if(Math.abs(ef)<.05)return;
+  const e=eX();const x1=e.l+EW+8,x2=e.r-EW-8;
+  X.strokeStyle=`rgba(255,255,255,${Math.abs(ef)*.06})`;X.lineWidth=.5;X.setLineDash([3,6]);
+  for(let i=0;i<6;i++){
+    const y=50+(H-100)*i/5;
+    X.beginPath();X.moveTo(x1,y);X.lineTo(x2,y);X.stroke();
+  }
+  X.setLineDash([]);
+}
+
+function drawHydrationShells(){
+  for(const p of P){
+    if(p.type!=='large')continue;
+    const sr=p.r*2.2;
+
+    // Filled zone
+    X.beginPath();X.arc(p.x,p.y,p.r*1.5,0,Math.PI*2);
+    X.fillStyle='rgba(255,204,0,.03)';X.fill();
+
+    // Outer dashed ring
+    X.beginPath();X.arc(p.x,p.y,sr,0,Math.PI*2);
+    X.strokeStyle='rgba(255,204,0,.1)';X.lineWidth=1;X.setLineDash([4,5]);X.stroke();X.setLineDash([]);
+
+    // Label
+    X.fillStyle='rgba(255,204,0,.2)';X.font="500 9px 'IBM Plex Mono',monospace";X.textAlign='center';
+    X.fillText('影響圏',p.x,p.y-sr-5);
+
+    // H-bond lines from large mol to bound water
+    for(const bw of P){
+      if(bw.type!=='bound'||bw.parentMol!==p)continue;
+      X.beginPath();X.moveTo(p.x,p.y);X.lineTo(bw.x,bw.y);
+      X.strokeStyle='rgba(255,180,80,.12)';X.lineWidth=.8;X.setLineDash([2,4]);X.stroke();X.setLineDash([]);
+    }
+  }
+}
+
+// ═══ Dynamic Bulk Impedance Model (Rb || Cb) ═══
+// Rb: more ions → lower (more charge carriers), more large mol → higher (obstruction)
+// Cb: more free water → higher (dielectric), more large mol → lower (bound water, ε↓)
+let Rb=210, Cb=500e-12;
+let nCat=120,nAni=110,nWat=38,nLrg=10;
+let currentPresetLabel='赤ワイン';
+
+function updateZModel(){
+  const totalIons=nCat+nAni;
+  // Normalized fractions (0→1)
+  const ionN=totalIons/600;  // max ion slider sum = 600
+  const watN=nWat/80;
+  const lrgN=nLrg/12;
+
+  // Rb: inversely proportional to ion concentration, boosted by large molecules
+  // Gives range from ~20Ω (shoyu) to ~2000Ω (water)
+  Rb=40/Math.pow(Math.max(ionN,0.02),1.5)*(1+lrgN*0.6);
+  Rb=Math.max(5,Math.min(5000,Rb));
+
+  // Cb: more free water → higher (dielectric), more large mol → lower (bound water ε↓)
+  Cb=(150+watN*900)*(1-lrgN*0.4)*1e-12;
+  Cb=Math.max(50e-12,Math.min(2000e-12,Cb));
+
+  document.getElementById('zRb').textContent=Rb.toFixed(0)+' Ω';
+  document.getElementById('zCb').textContent=(Cb*1e12).toFixed(0)+' pF';
+  document.getElementById('svgRb').textContent='Rb='+Rb.toFixed(0)+'Ω';
+  document.getElementById('svgCb').textContent='Cb='+(Cb*1e12).toFixed(0)+'pF';
+  recomputeFreqPts();
+}
+
+function calcZ(f){
+  if(f<=0)return{re:Rb,im:0,mag:Rb,phase:0};
+  const w=2*Math.PI*f;
+  const wRC=w*Rb*Cb;
+  const denom=1+wRC*wRC;
+  const re=Rb/denom, im=-wRC*Rb/denom;
+  return{re,im,mag:Math.sqrt(re*re+im*im),phase:Math.atan2(im,re)*180/Math.PI};
+}
+
+let freqPts=[];
+function recomputeFreqPts(){
+  freqPts=[];
+  for(let i=0;i<=80;i++){
+    const f=Math.pow(10,2.9+i*2.7/80);
+    freqPts.push({f,...calcZ(f)});
+  }
+}
+
+function onSlider(){
+  nCat=+document.getElementById('slCat').value;
+  nAni=+document.getElementById('slAni').value;
+  nWat=+document.getElementById('slWat').value;
+  nLrg=+document.getElementById('slLrg').value;
+  document.getElementById('vCat').textContent=nCat;
+  document.getElementById('vAni').textContent=nAni;
+  document.getElementById('vWat').textContent=nWat;
+  document.getElementById('vLrg').textContent=nLrg;
+  // Deactivate preset buttons
+  document.querySelectorAll('.pre-btn').forEach(b=>b.classList.remove('active'));
+  currentPresetLabel='カスタム';
+  updateZModel();
+  init();
+}
+
+// ═══ Liquid Presets ═══
+// Maps particle counts to physical liquid properties
+// More ions → Rb↓, More large mol → Rb↑ Cb↓, More free water → Cb↑
+const PRESETS={
+  shoyu: {cat:300,ani:300,wat:15,lrg:10, Rb:15,  Cb:320e-12, label:'醤油',
+    molLabels:['メラノイジン','アミノ酸'],
+    note:'NaCl ~16%でイオン極多。メラノイジン・アミノ酸が水を束縛。'},
+  su:    {cat:80, ani:80, wat:55,lrg:2,  Rb:250, Cb:750e-12, label:'穀物酢',
+    molLabels:['酢酸二量体','有機酸'],
+    note:'酢酸は弱酸（部分解離）。自由水が多くCb高め。大型分子は少。'},
+  mirin: {cat:40, ani:40, wat:18,lrg:12, Rb:1600,Cb:250e-12, label:'みりん',
+    molLabels:['グルコース','マルトース'],
+    note:'糖分~45%で大型分子が大量。イオン少。水はほとんど束縛。'},
+  water: {cat:25, ani:25, wat:75,lrg:0,  Rb:2200,Cb:900e-12, label:'水道水',
+    molLabels:['',''],
+    note:'ミネラル微量。大型分子ゼロ。ほぼ全て自由水。'},
+  wine:  {cat:120,ani:110,wat:38,lrg:10, Rb:210, Cb:500e-12, label:'赤ワイン',
+    molLabels:['タンニン','ポリフェノール'],
+    note:'有機酸+ミネラルでイオン中程度。タンニン・ポリフェノール等が多い。'},
+};
+let currentMolLabels=['タンニン','ポリフェノール'];
+
+function setPreset(key,btn){
+  const p=PRESETS[key];
+  document.querySelectorAll('.pre-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('slCat').value=p.cat;
+  document.getElementById('slAni').value=p.ani;
+  document.getElementById('slWat').value=p.wat;
+  document.getElementById('slLrg').value=p.lrg;
+  nCat=p.cat;nAni=p.ani;nWat=p.wat;nLrg=p.lrg;
+  currentPresetLabel=p.label;
+  currentMolLabels=p.molLabels||['大型分子','大型分子'];
+  document.getElementById('vCat').textContent=nCat;
+  document.getElementById('vAni').textContent=nAni;
+  document.getElementById('vWat').textContent=nWat;
+  document.getElementById('vLrg').textContent=nLrg;
+  // Use preset's direct Rb/Cb values
+  Rb=p.Rb;Cb=p.Cb;
+  document.getElementById('zRb').textContent=Rb.toFixed(0)+' Ω';
+  document.getElementById('zCb').textContent=(Cb*1e12).toFixed(0)+' pF';
+  document.getElementById('svgRb').textContent='Rb='+Rb.toFixed(0)+'Ω';
+  document.getElementById('svgCb').textContent='Cb='+(Cb*1e12).toFixed(0)+'pF';
+  recomputeFreqPts();
+  init();
+}
+
+function drawWave(){
+  const ww=WC.width/dpr,wh=WC.height/dpr;
+  WX.clearRect(0,0,ww,wh);
+  const pad=12, mid=wh/2, amp=wh*.32;
+  const dw=ww-pad*2;
+
+  // Zero line
+  WX.beginPath();WX.moveTo(pad,mid);WX.lineTo(pad+dw,mid);
+  WX.strokeStyle='rgba(255,255,255,.06)';WX.lineWidth=.5;WX.stroke();
+
+  if(mode==='off'){
+    WX.fillStyle='rgba(255,255,255,.35)';
+    WX.font="700 16px 'IBM Plex Mono',monospace";
+    WX.textAlign='center';WX.textBaseline='middle';
+    WX.fillText('E-field OFF',ww/2,mid);
+    return;
+  }
+  if(mode==='dc'){
+    // Input: flat +1
+    WX.beginPath();WX.moveTo(pad,mid-amp);WX.lineTo(pad+dw,mid-amp);
+    WX.strokeStyle='rgba(254,80,80,.7)';WX.lineWidth=2.5;WX.stroke();
+    // Response: flat +1 (DC = pure resistance, no phase shift)
+    WX.beginPath();WX.moveTo(pad,mid-amp*.85);WX.lineTo(pad+dw,mid-amp*.85);
+    WX.strokeStyle='rgba(80,160,255,.7)';WX.lineWidth=2.5;WX.setLineDash([6,4]);WX.stroke();WX.setLineDash([]);
+    // Labels
+    WX.font="700 13px 'IBM Plex Mono',monospace";
+    WX.textAlign='left';WX.textBaseline='top';
+    WX.fillStyle='rgba(254,80,80,.8)';WX.fillText('V 印加',pad,pad);
+    WX.fillStyle='rgba(80,160,255,.8)';WX.fillText('I 応答',pad,pad+16);
+    WX.fillStyle='rgba(255,255,255,.35)';WX.textAlign='center';
+    WX.fillText('DC: φ=0°, I∝V/Rb',ww/2,wh-20);
+    return;
+  }
+
+  const f=getFreq();
+  const cz=calcZ(f);
+  const phRad=cz.phase*Math.PI/180;
+  const ampRatio=cz.mag/Rb; // <1 at high freq for R||C
+
+  // Visual exaggeration — real phase diffs are tiny (few degrees)
+  // Multiply phase by 10× and amplitude change by 5× for visibility
+  const phaseExag=10;
+  const ampExag=5;
+  const visPhRad=phRad*phaseExag;
+  const visAmpRatio=1-(1-ampRatio)*ampExag; // exaggerate departure from 1
+
+  // Show only 1 cycle for clarity
+  const cycles=1, mult=f/1000;
+
+  // Input voltage (red)
+  WX.beginPath();
+  for(let px=0;px<=dw;px++){
+    const t=(px/dw)*cycles*Math.PI*2*mult;
+    const y=mid-Math.sin(t)*amp;
+    px===0?WX.moveTo(pad+px,y):WX.lineTo(pad+px,y);
+  }
+  WX.strokeStyle='rgba(254,80,80,.8)';WX.lineWidth=2.5;WX.stroke();
+
+  // Response current (blue) — exaggerated phase shift & amplitude
+  const respAmp=amp*Math.max(0.3,Math.min(1.3,visAmpRatio));
+  WX.beginPath();
+  for(let px=0;px<=dw;px++){
+    const t=(px/dw)*cycles*Math.PI*2*mult;
+    const y=mid-Math.sin(t-visPhRad)*respAmp;
+    px===0?WX.moveTo(pad+px,y):WX.lineTo(pad+px,y);
+  }
+  WX.strokeStyle='rgba(80,160,255,.8)';WX.lineWidth=2.5;WX.stroke();
+
+  // Legend — top left with background
+  const lgW=90,lgH=36;
+  WX.fillStyle='rgba(11,13,19,.75)';
+  WX.fillRect(pad-2,2,lgW,lgH);
+  WX.font="700 12px 'IBM Plex Mono',monospace";
+  WX.textAlign='left';WX.textBaseline='top';
+  WX.fillStyle='rgba(254,80,80,.9)';WX.fillText('━ V 印加',pad+2,6);
+  WX.fillStyle='rgba(80,160,255,.9)';WX.fillText('━ I 応答',pad+2,20);
+
+  // Exaggeration note — top right
+  WX.fillStyle='rgba(255,255,255,.25)';
+  WX.font="500 9px 'IBM Plex Mono',monospace";
+  WX.textAlign='right';WX.textBaseline='top';
+  WX.fillText('×'+phaseExag+'拡大',ww-pad,6);
+
+  // Values — bottom with background
+  const valStr='φ='+cz.phase.toFixed(2)+'°  |Z|='+cz.mag.toFixed(1)+'Ω  ('+f/1000+'kHz)';
+  WX.font="700 12px 'IBM Plex Mono',monospace";
+  const valW=WX.measureText(valStr).width+12;
+  WX.fillStyle='rgba(11,13,19,.75)';
+  WX.fillRect(ww/2-valW/2,wh-22,valW,18);
+  WX.fillStyle='rgba(255,255,255,.7)';
+  WX.textAlign='center';WX.textBaseline='bottom';
+  WX.fillText(valStr,ww/2,wh-6);
+
+  // Phase difference indicator — small arrow at top
+  if(Math.abs(visPhRad)>0.05){
+    const pk1X=pad+(0.25/mult)/cycles*dw;
+    const pk2X=pad+((0.25/mult-visPhRad/(2*Math.PI*mult))/cycles)*dw;
+    if(pk1X>pad+10&&pk2X>pad+10&&pk1X<pad+dw-10&&pk2X<pad+dw-10){
+      const bY=42;
+      WX.strokeStyle='rgba(255,255,255,.4)';WX.lineWidth=1.5;
+      WX.beginPath();WX.moveTo(pk1X,bY);WX.lineTo(pk2X,bY);WX.stroke();
+      WX.beginPath();WX.moveTo(pk1X,bY-3);WX.lineTo(pk1X,bY+3);WX.stroke();
+      WX.beginPath();WX.moveTo(pk2X,bY-3);WX.lineTo(pk2X,bY+3);WX.stroke();
+      WX.fillStyle='rgba(255,255,255,.35)';
+      WX.font="500 8px 'IBM Plex Mono',monospace";
+      WX.textAlign='center';WX.textBaseline='bottom';
+      WX.fillText('Δφ',(pk1X+pk2X)/2,bY-4);
+    }
+  }
+}
+
+function drawBode(){
+  const ww=BC.width/dpr,wh=BC.height/dpr;
+  BX.clearRect(0,0,ww,wh);
+  const pad={l:56,r:56,t:32,b:42};
+  const pw=ww-pad.l-pad.r, ph=wh-pad.t-pad.b;
+
+  // FIXED ranges — covers all presets (shoyu 15Ω → water 2200Ω, phase to -80°)
+  const zMin=5,zMax=3000; // log scale
+  const phMin=-90,phMax=2;
+  const useLogZ=true;
+
+  function xOfF(f){return pad.l+Math.log10(f/800)/(Math.log10(400000/800))*pw}
+  function yOfZ(z){return pad.t+(1-(Math.log10(Math.max(z,1))-Math.log10(zMin))/(Math.log10(zMax)-Math.log10(zMin)))*ph}
+  function yOfPh(p){return pad.t+(1-(p-phMin)/(phMax-phMin))*ph}
+
+  // Axes
+  BX.strokeStyle='rgba(255,255,255,.15)';BX.lineWidth=1;
+  BX.beginPath();BX.moveTo(pad.l,pad.t);BX.lineTo(pad.l,wh-pad.b);BX.lineTo(ww-pad.r,wh-pad.b);BX.stroke();
+  BX.beginPath();BX.moveTo(ww-pad.r,pad.t);BX.lineTo(ww-pad.r,wh-pad.b);BX.stroke();
+
+  // Vertical grid
+  BX.strokeStyle='rgba(255,255,255,.06)';BX.lineWidth=.5;
+  [1000,10000,100000].forEach(f=>{
+    const x=xOfF(f);BX.beginPath();BX.moveTo(x,pad.t);BX.lineTo(x,wh-pad.b);BX.stroke();
+  });
+
+  // |Z| Y-axis (fixed log scale)
+  BX.fillStyle='rgba(254,80,80,.35)';BX.font="600 11px 'IBM Plex Mono',monospace";
+  BX.textAlign='right';BX.textBaseline='middle';
+  [10,50,100,500,1000,2000].forEach(z=>{
+    const y=yOfZ(z);
+    if(y>pad.t-2&&y<wh-pad.b+2){
+      BX.fillText(z>=1000?z/1000+'k':z,pad.l-8,y);
+      BX.beginPath();BX.moveTo(pad.l,y);BX.lineTo(ww-pad.r,y);
+      BX.strokeStyle='rgba(255,255,255,.04)';BX.lineWidth=.5;BX.stroke();
+    }
+  });
+  // Phase Y-axis (fixed)
+  BX.fillStyle='rgba(0,212,170,.35)';BX.textAlign='left';
+  [-80,-60,-40,-20,0].forEach(p=>{
+    const y=yOfPh(p);
+    if(y>pad.t-2&&y<wh-pad.b+2){
+      BX.fillText(p+'°',ww-pad.r+8,y);
+      BX.beginPath();BX.moveTo(pad.l,y);BX.lineTo(ww-pad.r,y);
+      BX.strokeStyle='rgba(255,255,255,.03)';BX.lineWidth=.5;BX.stroke();
+    }
+  });
+
+  // |Z| curve
+  BX.beginPath();
+  freqPts.forEach((p,i)=>{
+    const x=xOfF(p.f),y=yOfZ(p.mag);
+    i===0?BX.moveTo(x,y):BX.lineTo(x,y);
+  });
+  BX.strokeStyle='rgba(254,80,80,.8)';BX.lineWidth=2.5;BX.stroke();
+
+  // Phase curve
+  BX.beginPath();
+  freqPts.forEach((p,i)=>{
+    const x=xOfF(p.f),y=yOfPh(p.phase);
+    i===0?BX.moveTo(x,y):BX.lineTo(x,y);
+  });
+  BX.strokeStyle='rgba(0,212,170,.7)';BX.lineWidth=2.5;BX.stroke();
+
+  // Current frequency marker
+  const cf=getFreq();
+  if(cf>0){
+    const cz=calcZ(cf);
+    const cx=xOfF(cf),cyZ=yOfZ(cz.mag),cyP=yOfPh(cz.phase);
+    // Vertical line
+    BX.beginPath();BX.moveTo(cx,pad.t);BX.lineTo(cx,wh-pad.b);
+    BX.strokeStyle='rgba(255,255,255,.12)';BX.lineWidth=1;BX.setLineDash([4,4]);BX.stroke();BX.setLineDash([]);
+    // |Z| dot + horizontal guide
+    BX.beginPath();BX.arc(cx,cyZ,6,0,Math.PI*2);BX.fillStyle='#fe0808';BX.fill();
+    BX.strokeStyle='rgba(254,80,80,.2)';BX.lineWidth=.5;BX.setLineDash([2,4]);
+    BX.beginPath();BX.moveTo(pad.l,cyZ);BX.lineTo(cx,cyZ);BX.stroke();BX.setLineDash([]);
+    // Phase dot + horizontal guide
+    BX.beginPath();BX.arc(cx,cyP,6,0,Math.PI*2);BX.fillStyle='#00d4aa';BX.fill();
+    BX.strokeStyle='rgba(0,212,170,.2)';BX.lineWidth=.5;BX.setLineDash([2,4]);
+    BX.beginPath();BX.moveTo(cx,cyP);BX.lineTo(ww-pad.r,cyP);BX.stroke();BX.setLineDash([]);
+
+    // Readout strip BELOW the freq axis — never overlaps chart
+    const readY=wh-8;
+    BX.font="bold 12px 'IBM Plex Mono',monospace";
+    BX.textBaseline='bottom';
+    BX.fillStyle='rgba(254,80,80,.9)';BX.textAlign='left';
+    BX.fillText('|Z|='+cz.mag.toFixed(1)+'Ω',pad.l,readY);
+    BX.fillStyle='rgba(255,255,255,.4)';BX.textAlign='center';
+    BX.fillText(cf/1000+'kHz',ww/2,readY);
+    BX.fillStyle='rgba(0,212,170,.9)';BX.textAlign='right';
+    BX.fillText('φ='+cz.phase.toFixed(1)+'°',ww-pad.r,readY);
+  }
+
+  // Axis titles — outside chart area
+  BX.font="600 10px 'IBM Plex Mono',monospace";
+  BX.fillStyle='rgba(254,80,80,.5)';BX.textAlign='left';BX.textBaseline='bottom';
+  BX.fillText('|Z| [Ω]',pad.l,pad.t-4);
+  BX.fillStyle='rgba(0,212,170,.5)';BX.textAlign='right';
+  BX.fillText('φ [°]',ww-pad.r,pad.t-4);
+
+  // Freq axis labels
+  BX.fillStyle='rgba(255,255,255,.3)';BX.font="600 10px 'IBM Plex Mono',monospace";
+  BX.textAlign='center';BX.textBaseline='top';
+  [1000,10000,100000].forEach(f=>{
+    BX.fillText(f/1000+'k',xOfF(f),wh-pad.b+4);
+  });
+  BX.textAlign='right';
+  BX.fillText('[Hz]',ww-pad.r,wh-pad.b+4);
+}
+
+function drawNyquist(){
+  const ww=NC.width/dpr,wh=NC.height/dpr;
+  NX.clearRect(0,0,ww,wh);
+  const pad={l:42,r:14,t:32,b:42};
+  const pw=ww-pad.l-pad.r, ph=wh-pad.t-pad.b;
+
+  // FIXED ranges — covers all presets
+  const reMin=0,reMax=2500,imMin=0,imMax=1200;
+  function xOfRe(r){return pad.l+(r-reMin)/(reMax-reMin)*pw}
+  function yOfIm(im){return pad.t+(1-(-im-imMin)/(imMax-imMin))*ph}
+
+  // Axes
+  NX.strokeStyle='rgba(255,255,255,.15)';NX.lineWidth=1;
+  NX.beginPath();NX.moveTo(pad.l,wh-pad.b);NX.lineTo(ww-pad.r,wh-pad.b);NX.stroke();
+  NX.beginPath();NX.moveTo(pad.l,pad.t);NX.lineTo(pad.l,wh-pad.b);NX.stroke();
+
+  // Grid with fixed ticks + labels
+  NX.strokeStyle='rgba(255,255,255,.04)';NX.lineWidth=.5;
+  NX.font="600 9px 'IBM Plex Mono',monospace";
+  [500,1000,1500,2000].forEach(r=>{
+    const x=xOfRe(r);
+    NX.beginPath();NX.moveTo(x,pad.t);NX.lineTo(x,wh-pad.b);NX.stroke();
+    NX.fillStyle='rgba(255,255,255,.2)';NX.textAlign='center';NX.textBaseline='top';
+    NX.fillText(r>=1000?r/1000+'k':r,x,wh-pad.b+4);
+  });
+  [200,400,600,800,1000].forEach(im=>{
+    const y=yOfIm(-im);
+    NX.beginPath();NX.moveTo(pad.l,y);NX.lineTo(ww-pad.r,y);NX.stroke();
+    NX.fillStyle='rgba(255,255,255,.2)';NX.textAlign='right';NX.textBaseline='middle';
+    NX.fillText(im,pad.l-4,y);
+  });
+
+  // Curve
+  NX.beginPath();
+  freqPts.forEach((p,i)=>{
+    const x=xOfRe(p.re),y=yOfIm(p.im);
+    i===0?NX.moveTo(x,y):NX.lineTo(x,y);
+  });
+  NX.strokeStyle='rgba(180,136,255,.75)';NX.lineWidth=2.5;NX.stroke();
+
+  // Freq tick marks along curve (dots only, no text overlap)
+  NX.fillStyle='rgba(180,136,255,.4)';
+  [0,40,80].forEach(i=>{
+    if(i>=freqPts.length)return;
+    const p=freqPts[i];
+    const x=xOfRe(p.re),y=yOfIm(p.im);
+    NX.beginPath();NX.arc(x,y,3,0,Math.PI*2);NX.fill();
+  });
+
+  // Current freq marker
+  const cf=getFreq();
+  if(cf>0){
+    const cz=calcZ(cf);
+    const cx=xOfRe(cz.re),cy=yOfIm(cz.im);
+    // Crosshair guides
+    NX.strokeStyle='rgba(180,136,255,.15)';NX.lineWidth=.5;NX.setLineDash([3,4]);
+    NX.beginPath();NX.moveTo(cx,pad.t);NX.lineTo(cx,wh-pad.b);NX.stroke();
+    NX.beginPath();NX.moveTo(pad.l,cy);NX.lineTo(ww-pad.r,cy);NX.stroke();
+    NX.setLineDash([]);
+    // Dot
+    NX.beginPath();NX.arc(cx,cy,7,0,Math.PI*2);NX.fillStyle='rgba(180,136,255,.9)';NX.fill();
+    NX.strokeStyle='rgba(255,255,255,.3)';NX.lineWidth=2;NX.stroke();
+    // Readout strip below chart
+    const readY=wh-8;
+    NX.font="bold 11px 'IBM Plex Mono',monospace";NX.textBaseline='bottom';
+    NX.fillStyle='rgba(180,136,255,.9)';NX.textAlign='left';
+    NX.fillText(cf/1000+'kHz',pad.l,readY);
+    NX.fillStyle='rgba(255,255,255,.5)';NX.textAlign='right';
+    NX.fillText('Re='+cz.re.toFixed(0)+' Im='+(-cz.im).toFixed(1),ww-pad.r,readY);
+  }
+
+  // Axis labels — outside chart area
+  NX.fillStyle='rgba(255,255,255,.35)';NX.font="600 10px 'IBM Plex Mono',monospace";
+  NX.textAlign='center';NX.textBaseline='top';
+  NX.fillText('ZRe [Ω]',(pad.l+ww-pad.r)/2,wh-pad.b+4);
+  NX.save();NX.translate(pad.l-24,(pad.t+wh-pad.b)/2);NX.rotate(-Math.PI/2);
+  NX.textBaseline='middle';NX.fillText('-ZIm [Ω]',0,0);NX.restore();
+
+  // Rb marker
+  const rbX=xOfRe(Rb);
+  if(rbX>pad.l&&rbX<ww-pad.r){
+    NX.beginPath();NX.moveTo(rbX,wh-pad.b);NX.lineTo(rbX,wh-pad.b+6);
+    NX.strokeStyle='rgba(255,255,255,.3)';NX.lineWidth=1.5;NX.stroke();
+    NX.fillStyle='rgba(255,255,255,.3)';NX.font="700 10px 'IBM Plex Mono',monospace";
+    NX.textAlign='center';NX.textBaseline='top';
+    NX.fillText('Rb',rbX,wh-pad.b+8);
+  }
+}
+
+function vFreq(){
+  if(mode==='off'||mode==='dc')return 0;
+  return mode==='1k'?1.2:mode==='10k'?4:12;
+}
+
+function getEF(t){
+  if(mode==='off')return 0;
+  if(mode==='dc')return 1.0; // constant positive field
+  return Math.sin(t*vFreq()*Math.PI*2);
+}
+
+// ═══ UI ═══
+function setMode(m,btn){
+  // Manual click stops sweep
+  if(sweepRunning&&btn){stopSweep();}
+  mode=m;
+  document.querySelectorAll('.freq-btn:not(#sweepBtn)').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  updText();
+}
+
+// ═══ Auto Sweep ═══
+const SWEEP_SEQ=['off','dc','1k','10k','100k'];
+const SWEEP_DURATION=[3000,5000,5000,4000,4000]; // ms per step
+let sweepRunning=false, sweepIdx=0, sweepTimer=null;
+
+function toggleSweep(){
+  if(sweepRunning){stopSweep();}
+  else{startSweep();}
+}
+
+function startSweep(){
+  sweepRunning=true;
+  sweepIdx=0;
+  const btn=document.getElementById('sweepBtn');
+  btn.textContent='■ Stop';
+  btn.style.borderColor='rgba(254,8,8,.6)';
+  btn.style.color='rgba(254,8,8,.9)';
+  btn.style.background='rgba(254,8,8,.12)';
+  sweepStep();
+}
+
+function stopSweep(){
+  sweepRunning=false;
+  if(sweepTimer)clearTimeout(sweepTimer);
+  sweepTimer=null;
+  const btn=document.getElementById('sweepBtn');
+  btn.textContent='▶ Sweep';
+  btn.style.borderColor='rgba(255,180,0,.4)';
+  btn.style.color='rgba(255,180,0,.7)';
+  btn.style.background='';
+}
+
+function sweepStep(){
+  if(!sweepRunning)return;
+  const m=SWEEP_SEQ[sweepIdx];
+  mode=m;
+  // Highlight the corresponding freq button
+  const btns=document.querySelectorAll('.freq-btn:not(#sweepBtn)');
+  btns.forEach(b=>b.classList.remove('active'));
+  btns[sweepIdx].classList.add('active');
+  updText();
+  
+  sweepIdx++;
+  if(sweepIdx>=SWEEP_SEQ.length){
+    sweepIdx=0; // loop back
+  }
+  sweepTimer=setTimeout(sweepStep,SWEEP_DURATION[sweepIdx-1]||4000);
+}
+
+function updText(){
+  const bI=document.getElementById('bI'),bWf=document.getElementById('bWf');
+  const bWb=document.getElementById('bWb'),bL=document.getElementById('bL');
+
+  if(mode==='off'){
+    bI.innerHTML='<strong>慣性で動き続ける</strong>。徐々に減速。';
+    bWf.innerHTML='トルクなし。<strong>ランダムな向き</strong>に緩和';
+    bWb.innerHTML='<strong>拘束されたまま</strong>';
+    bL.innerHTML='<strong>ほぼ静止</strong>';
+  }else if(mode==='dc'){
+    bI.innerHTML='一方向に<strong>連続ドリフト → 電気二重層</strong>形成。';
+    bWf.innerHTML='<strong>一方向に完全配向</strong>';
+    bWb.innerHTML='<strong>配向不能</strong>（凍結）';
+    bL.innerHTML='ゆっくり<strong>一方向に配向</strong>';
+  }else if(mode==='1k'){
+    bI.innerHTML='<strong>大きくドリフト</strong>。大型分子に衝突し迂回。';
+    bWf.innerHTML='<strong>完全に配向</strong>。即座に追従';
+    bWb.innerHTML='<strong>配向不能</strong>（凍結）';
+    bL.innerHTML='ゆっくり<strong>配向</strong>。拘束中';
+  }else if(mode==='10k'){
+    bI.innerHTML='追従するが<strong>移動距離が減少</strong>。';
+    bWf.innerHTML='<strong>変わらず完全配向</strong>';
+    bWb.innerHTML='<strong>依然として凍結</strong>';
+    bL.innerHTML='配向が<strong>遅延し始める</strong>';
+  }else{
+    bI.innerHTML='<strong>小刻みに振動</strong>。移動距離が激減。';
+    bWf.innerHTML='<strong>なお完全配向</strong> (Debye ~17GHz)';
+    bWb.innerHTML='<strong>完全に凍結</strong>';
+    bL.innerHTML='<strong>追従不能</strong>。ほぼ静止';
+  }
+}
+
+function updEF(ef){
+  const a=document.getElementById('eA'),l=document.getElementById('eL');
+  if(ef>.1){a.textContent='→';a.style.color='#ff6655';l.textContent='+'+ef.toFixed(1)}
+  else if(ef<-.1){a.textContent='←';a.style.color='#4488ff';l.textContent=ef.toFixed(1)}
+  else{a.textContent='·';a.style.color='#fe0808';l.textContent='0.0'}
+}
+
+// ═══ Main loop ═══
+let lt=performance.now();
+function loop(now){
+  const rd=(now-lt)/1000;lt=now;
+  const dt=Math.min(rd,.05)*spd;time+=dt;
+  resize();
+
+  const ef=getEF(time);
+
+  X.fillStyle='#0b0d13';X.fillRect(0,0,W,H);
+
+  // Grid
+  X.strokeStyle='rgba(255,255,255,.015)';X.lineWidth=.5;
+  for(let x=0;x<W;x+=28){X.beginPath();X.moveTo(x,0);X.lineTo(x,H);X.stroke()}
+  for(let y=0;y<H;y+=28){X.beginPath();X.moveTo(0,y);X.lineTo(W,y);X.stroke()}
+
+  drawFieldLines(ef);
+  drawElectrodes(ef);
+
+  // Pre-build ion list for efficient Coulomb calculation
+  ionList=P.filter(p=>p.charge!==0);
+  // Update all
+  for(const p of P)p.update(dt,ef);
+
+  // ── Post-update collision resolution ──
+  // 1) Large vs Large: prevent overlap
+  const larges=P.filter(p=>p.type==='large');
+  for(let i=0;i<larges.length;i++){
+    for(let j=i+1;j<larges.length;j++){
+      const a=larges[i],b=larges[j];
+      const dx=b.x-a.x,dy=b.y-a.y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      const minD=a.r+b.r+10;
+      if(d<minD&&d>0.1){
+        const overlap=(minD-d)/2;
+        const nx=dx/d,ny=dy/d;
+        a.x-=nx*overlap;a.y-=ny*overlap;
+        b.x+=nx*overlap;b.y+=ny*overlap;
+      }
+    }
+  }
+  // 2) Small vs Large: hard push-out + velocity reflection (2 iterations)
+  for(let iter=0;iter<2;iter++){
+    for(const p of P){
+      if(p.type==='large'||p.type==='bound')continue;
+      for(const o of larges){
+        const dx=p.x-o.x,dy=p.y-o.y;
+        // Elliptical test
+        const cosA=Math.cos(o.angle),sinA=Math.sin(o.angle);
+        const lx=dx*cosA+dy*sinA, ly=-dx*sinA+dy*cosA;
+        const ex2=lx/o.r, ey2=ly/(o.r*0.55);
+        const eD=Math.sqrt(ex2*ex2+ey2*ey2);
+        const margin=(p.r+5)/Math.max(o.r,o.r*0.55);
+        if(eD<1+margin){
+          const tgt=1+margin+0.03;
+          const sc=tgt/Math.max(eD,0.001);
+          const nlx=lx*sc, nly=ly*sc;
+          const newX=o.x+nlx*cosA-nly*sinA;
+          const newY=o.y+nlx*sinA+nly*cosA;
+          // Reflect velocity along push-out direction (for ions)
+          if(p.charge!==0){
+            const pushDx=newX-p.x, pushDy=newY-p.y;
+            const pushLen=Math.sqrt(pushDx*pushDx+pushDy*pushDy);
+            if(pushLen>0.1){
+              const nx=pushDx/pushLen, ny=pushDy/pushLen;
+              const dot=p.vx*nx+p.vy*ny;
+              if(dot<0){
+                // DC/OFF: absorb most energy. AC: moderate bounce
+                const refl=(mode==='dc'||mode==='off')?1.05:1.5;
+                p.vx-=refl*dot*nx;
+                p.vy-=refl*dot*ny;
+              }
+            }
+          }
+          p.x=newX;p.y=newY;
+        }
+      }
+    }
+  }
+
+  // Draw shells behind particles
+  drawHydrationShells();
+
+  // Sort by radius, draw
+  P.sort((a,b)=>a.r-b.r);
+  for(const p of P)p.draw();
+
+  // Freq watermark — subtle, behind everything
+  X.fillStyle='rgba(255,255,255,.04)';
+  X.font="800 68px 'Outfit',sans-serif";X.textAlign='center';X.textBaseline='middle';
+  const wm=mode==='off'?'OFF':mode==='dc'?'DC':getFreq()/1000+'kHz';
+  X.fillText(wm,W/2,H/2+50);
+
+  // Preset label — center of canvas, prominent
+  X.fillStyle='rgba(255,255,255,.9)';
+  X.font="900 48px 'Noto Sans JP',sans-serif";
+  X.textAlign='center';X.textBaseline='middle';
+  X.fillText(currentPresetLabel,W/2,H/2-10);
+  // Rb/Cb below
+  X.fillStyle='rgba(255,255,255,.8)';
+  X.font="700 18px 'IBM Plex Mono',monospace";
+  X.textAlign='center';X.textBaseline='middle';
+  X.fillText('Rb='+Rb.toFixed(0)+'Ω  Cb='+(Cb*1e12).toFixed(0)+'pF',W/2,H/2+26);
+
+  // Sweep progress indicator
+  if(sweepRunning){
+    const labels=['OFF','DC','1k','10k','100k'];
+    const curIdx=SWEEP_SEQ.indexOf(mode);
+    const totalW=260, stepW=totalW/labels.length;
+    const sx=W/2-totalW/2, sy=H-28;
+    X.font="700 12px 'IBM Plex Mono',monospace";
+    X.textBaseline='middle';
+    for(let i=0;i<labels.length;i++){
+      const cx=sx+stepW*i+stepW/2;
+      // Step background
+      if(i===curIdx){
+        X.fillStyle='rgba(254,8,8,.3)';
+        X.beginPath();X.roundRect(sx+stepW*i+2,sy-10,stepW-4,20,[4]);X.fill();
+        X.fillStyle='rgba(254,8,8,1)';
+      }else if(i<curIdx){
+        X.fillStyle='rgba(255,255,255,.25)';
+      }else{
+        X.fillStyle='rgba(255,255,255,.12)';
+      }
+      X.textAlign='center';
+      X.fillText(labels[i],cx,sy);
+      // Arrow between steps
+      if(i<labels.length-1){
+        X.fillStyle='rgba(255,255,255,.15)';
+        X.fillText('→',sx+stepW*(i+1),sy);
+      }
+    }
+  }
+
+  updEF(ef);drawWave();drawBode();drawNyquist();
+  requestAnimationFrame(loop);
+}
+
+let initialized=false;
+function startLoop(now){
+  if(!initialized){
+    resize(); // ensure dimensions are correct
+    if(W>100&&H>100){
+      updateZModel();init();updText();initialized=true;
+    }else{
+      requestAnimationFrame(startLoop);return;
+    }
+  }
+  lt=now;
+  requestAnimationFrame(loop);
+}
+// Wait for layout to settle, then start
+requestAnimationFrame(startLoop);
+</script>
+
+
+<div style="position:fixed;bottom:24px;right:24px;z-index:1000">
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:#fe0808;color:#fff;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;padding:12px 22px;border-radius:10px;text-decoration:none;box-shadow:0 4px 20px rgba(254,8,8,.3);transition:all .3s">← トップに戻る</a>
+</div>
+</body>
+</html>
