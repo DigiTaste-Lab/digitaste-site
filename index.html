@@ -641,20 +641,20 @@ footer {
 .news-section { background: var(--bg-warm); }
 .news-list { max-width: 800px; margin: 0 auto; }
 .news-item {
-  display: flex; gap: 20px; align-items: baseline;
+  display: flex; gap: 20px; align-items: center;
   padding: 20px 0;
   border-bottom: 1px solid var(--border);
-  text-decoration: none; color: inherit;
-  transition: background 0.2s;
+  color: inherit;
 }
 .news-item:first-child { border-top: 1px solid var(--border); }
 .news-date {
   font-family: var(--font-mono); font-size: 0.82rem;
   color: var(--text-muted); white-space: nowrap; min-width: 110px;
+  flex-shrink: 0;
 }
 .news-tag {
   font-size: 0.7rem; font-weight: 700; padding: 2px 10px;
-  border-radius: 4px; white-space: nowrap;
+  border-radius: 4px; white-space: nowrap; flex-shrink: 0;
 }
 .news-tag.award { background: rgba(254,8,8,0.08); color: var(--red); }
 .news-tag.release { background: var(--blue-bg); color: var(--blue); }
@@ -662,11 +662,51 @@ footer {
 .news-tag.event { background: rgba(0,0,0,0.05); color: var(--text-secondary); }
 .news-title {
   font-size: 0.95rem; font-weight: 500; color: var(--text);
-  line-height: 1.6;
+  line-height: 1.6; flex: 1;
 }
+.news-item.clickable { cursor: pointer; transition: background 0.2s; }
+.news-item.clickable:hover { background: rgba(0,0,0,0.02); margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+.news-chevron {
+  flex-shrink: 0; width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; background: var(--surface);
+  font-size: 0.7rem; color: var(--text-muted);
+  transition: transform 0.3s, background 0.2s;
+}
+.news-item.clickable:hover .news-chevron { background: var(--border-strong); }
+.news-item.clickable.open .news-chevron { transform: rotate(90deg); }
+.news-detail {
+  overflow: hidden;
+  max-height: 0; opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+  padding: 0 0;
+}
+.news-detail.open {
+  max-height: 600px; opacity: 1;
+  padding: 20px 0 8px;
+}
+.news-detail-body {
+  padding: 20px 24px; background: var(--bg); border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.news-detail-photos {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+}
+.news-photo-placeholder {
+  aspect-ratio: 16/10; background: var(--surface); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; color: var(--text-dim); border: 1px dashed var(--border-strong);
+}
+.news-detail-text p {
+  font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 8px;
+}
+.news-detail-text p:last-child { margin-bottom: 0; }
+.news-detail-text a { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(54,114,248,0.3); }
+.news-detail-text a:hover { border-color: var(--blue); }
 @media (max-width: 600px) {
   .news-item { flex-wrap: wrap; gap: 6px 12px; }
   .news-date { min-width: auto; }
+  .news-detail-photos { grid-template-columns: 1fr; }
 }
 
 </style>
@@ -721,23 +761,7 @@ footer {
     <div class="section-label">News</div>
     <div class="section-title">ニュースリリース</div>
     <p class="section-desc">DigiTasteの最新情報をお届けします。</p>
-    <div class="news-list">
-      <div class="news-item">
-        <span class="news-date">2026.03.27</span>
-        <span class="news-tag event">イベント</span>
-        <span class="news-title"><a href="https://km.lne.st/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid var(--border-strong)">全国知識製造業会議 2026</a> に出展しました。</span>
-      </div>
-      <div class="news-item">
-        <span class="news-date">2026.03.20</span>
-        <span class="news-tag release">リリース</span>
-        <span class="news-title">公式Webサイトを公開しました。</span>
-      </div>
-      <div class="news-item">
-        <span class="news-date">2026.02.22</span>
-        <span class="news-tag release">リリース</span>
-        <span class="news-title">株式会社DigiTasteを設立しました。</span>
-      </div>
-    </div>
+    <div class="news-list" id="news-list"></div>
   </div>
 </section>
 
@@ -1039,5 +1063,51 @@ footer {
     </div>
   </div>
 </footer>
+<script src="news.js"></script>
+<script>
+function toggleNewsDetail(el) {
+  el.classList.toggle('open');
+  const detail = el.nextElementSibling;
+  if (detail && detail.classList.contains('news-detail')) {
+    detail.classList.toggle('open');
+  }
+}
+
+(function() {
+  const list = document.getElementById('news-list');
+  NEWS_DATA.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'news-item' + (item.detail ? ' clickable' : '');
+    if (item.detail) row.onclick = function(){ toggleNewsDetail(this); };
+    row.innerHTML =
+      '<span class="news-date">' + item.date + '</span>' +
+      '<span class="news-tag ' + item.tag + '">' + item.tagLabel + '</span>' +
+      '<span class="news-title">' + item.title + '</span>' +
+      (item.detail ? '<span class="news-chevron">▸</span>' : '');
+    list.appendChild(row);
+
+    if (item.detail) {
+      const detail = document.createElement('div');
+      detail.className = 'news-detail';
+      let photos = '';
+      if (item.detail.photos && item.detail.photos.length > 0) {
+        photos = item.detail.photos.map(p =>
+          '<img src="' + p.src + '" alt="' + (p.alt || '') + '" style="width:100%;border-radius:8px;aspect-ratio:16/10;object-fit:cover;background:var(--surface);border:1px solid var(--border)">'
+        ).join('');
+      } else {
+        photos = '<div class="news-photo-placeholder">写真を追加</div><div class="news-photo-placeholder">写真を追加</div>';
+      }
+      detail.innerHTML =
+        '<div class="news-detail-body">' +
+          '<div class="news-detail-photos">' + photos + '</div>' +
+          '<div class="news-detail-text">' +
+            item.detail.body.map(p => '<p>' + p + '</p>').join('') +
+          '</div>' +
+        '</div>';
+      list.appendChild(detail);
+    }
+  });
+})();
+</script>
 </body>
 </html>
