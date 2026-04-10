@@ -637,6 +637,38 @@ footer {
 .eis-section { background: #0b0d13; padding: 0; position: relative; }
 .eis-section a:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.3); border-color: rgba(254,8,8,.3); }
 
+/* ─── News ─── */
+.news-section { background: var(--bg-warm); }
+.news-list { max-width: 800px; margin: 0 auto; }
+.news-item {
+  display: flex; gap: 20px; align-items: baseline;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit;
+  transition: background 0.2s;
+}
+.news-item:first-child { border-top: 1px solid var(--border); }
+.news-date {
+  font-family: var(--font-mono); font-size: 0.82rem;
+  color: var(--text-muted); white-space: nowrap; min-width: 110px;
+}
+.news-tag {
+  font-size: 0.7rem; font-weight: 700; padding: 2px 10px;
+  border-radius: 4px; white-space: nowrap;
+}
+.news-tag.award { background: rgba(254,8,8,0.08); color: var(--red); }
+.news-tag.release { background: var(--blue-bg); color: var(--blue); }
+.news-tag.media { background: var(--green-bg); color: var(--green); }
+.news-tag.event { background: rgba(0,0,0,0.05); color: var(--text-secondary); }
+.news-title {
+  font-size: 0.95rem; font-weight: 500; color: var(--text);
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .news-item { flex-wrap: wrap; gap: 6px 12px; }
+  .news-date { min-width: auto; }
+}
+
 </style>
 </head>
 <body>
@@ -653,6 +685,7 @@ footer {
       <a href="#solution">Solution</a>
       <a href="#awards">受賞歴</a>
       <a href="#eis">EIS原理</a>
+      <a href="#news">News</a>
       <a href="#contact" class="nav-cta">お問い合わせ</a>
     </div>
   </div>
@@ -677,6 +710,32 @@ footer {
           <img src="assets/device.png" alt="DigiTaste Pro — 液体解析AIセンサー" loading="eager">
           <div class="hero-photo-label">DigiTaste Pro v4.18.0</div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ NEWS ═══ -->
+<section class="news-section" id="news">
+  <div class="container">
+    <div class="section-label">News</div>
+    <div class="section-title">ニュースリリース</div>
+    <p class="section-desc">DigiTasteの最新情報をお届けします。</p>
+    <div class="news-list">
+      <div class="news-item">
+        <span class="news-date">2026.03.27</span>
+        <span class="news-tag event">イベント</span>
+        <span class="news-title"><a href="https://km.lne.st/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid var(--border-strong)">全国知識製造業会議 2026</a> に出展しました</span>
+      </div>
+      <div class="news-item">
+        <span class="news-date">2026.03.20</span>
+        <span class="news-tag release">リリース</span>
+        <span class="news-title">公式Webサイトを公開しました</span>
+      </div>
+      <div class="news-item">
+        <span class="news-date">2026.02.22</span>
+        <span class="news-tag release">リリース</span>
+        <span class="news-title">株式会社DigiTasteを設立しました</span>
       </div>
     </div>
   </div>
@@ -864,6 +923,7 @@ footer {
     </div>
   </div>
 </section>
+
 
 <!-- ═══ CONTACT FORM ═══ -->
 <section class="cta-section" id="contact">
