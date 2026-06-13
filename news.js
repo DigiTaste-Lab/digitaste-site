@@ -1,3 +1,4 @@
+```js
 const NEWS_DATA = [
   {
     date: "2026.06.08",
@@ -9,14 +10,7 @@ const NEWS_DATA = [
     date: "2026.03.27",
     tag: "event",
     tagLabel: "イベント",
-    title: "全国知識製造業会議 2026 に出展しました。",
-    //detail: {
-      photos: [],
-      body: [
-        '2026年3月27日、<a href="https://km.lne.st/" target="_blank" rel="noopener">全国知識製造業会議 2026</a>にてDigiTaste Proを出展しました。',
-        "液体解析AIセンサーのライブデモンストレーションを実施し、多くの来場者にDigiTasteの技術を体験いただきました。"
-      ]
-    //}
+    title: '<a href="https://km.lne.st/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">全国知識製造業会議 2026 に出展しました。</a>'
   },
   {
     date: "2026.03.20",
@@ -31,3 +25,4 @@ const NEWS_DATA = [
     title: "株式会社DigiTasteを設立しました。"
   }
 ];
+```
