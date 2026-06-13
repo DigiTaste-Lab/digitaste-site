@@ -24,4 +24,3 @@ const NEWS_DATA = [
     title: "株式会社DigiTasteを設立しました。"
   }
 ];
-```
