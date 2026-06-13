@@ -1,5 +1,11 @@
 const NEWS_DATA = [
   {
+    date: "2026.06.08",
+    tag: "award",
+    tagLabel: "採択",
+    title: '<a href="https://www.acceleration-tokyo.metro.tokyo.lg.jp/detail.php?keyno=420" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">東京都主催 ASACスタートアップアクセラレーション シードプログラム第22期に採択されました。</a>'
+  },
+  {
     date: "2026.03.27",
     tag: "event",
     tagLabel: "イベント",
