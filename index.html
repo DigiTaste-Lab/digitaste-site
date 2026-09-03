@@ -271,101 +271,115 @@ section { padding: clamp(80px, 10vw, 120px) 0; }
   line-break: strict;
   text-wrap: pretty;
 }
-.hero-sub, .problem-card p, .decision-card p, .application-card p, .step p, .news-title {
+.hero-sub, .step p, .news-title {
   line-break: strict;
   text-wrap: pretty;
 }
-.card-heading {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  min-width: 0;
-}
-.card-heading h3 {
-  margin: 0;
-  line-height: 1.45;
-  line-break: strict;
-}
 
-/* ─── Problem ─── */
+/* ─── Editorial lists: no icon cards ─── */
 .problem-section { background: var(--bg); }
-.problem-grid {
+.editorial-list {
+  margin-top: 48px;
+  border-top: 1px solid var(--border-strong);
+}
+.editorial-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: 52px;
+  grid-template-columns: 88px minmax(230px, .8fr) 1.45fr;
+  gap: 28px;
+  align-items: start;
+  padding: 26px 0 28px;
+  border-bottom: 1px solid var(--border);
 }
-.problem-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 30px 24px;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
+.editorial-index {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  color: var(--red);
+  padding-top: 4px;
 }
-.problem-card:hover {
-  border-color: rgba(254,8,8,0.15);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-.problem-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--red), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.problem-card:hover::before { opacity: 1; }
-.problem-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  background: var(--red-bg);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 0;
-  flex: 0 0 44px;
-  font-size: 1.2rem;
-}
-.problem-card h3 { font-size: 0.95rem; font-weight: 700; margin: 0; white-space: nowrap; }
-.problem-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.8; }
-
-/* ─── Decision / Application cards ─── */
-.decision-grid, .application-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  max-width: 960px;
-  margin: 40px auto 0;
-}
-.decision-card, .application-card {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 26px 24px;
-}
-.decision-card { background: var(--bg-warm); }
-.application-card { background: var(--bg); }
-.decision-card .card-icon, .application-card .card-icon {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.45rem;
-}
-.decision-card h3, .application-card h3 {
+.editorial-row h3 {
   font-size: 1rem;
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.55;
+  margin: 0;
+  line-break: strict;
+  text-wrap: balance;
 }
-.decision-card p, .application-card p {
+.editorial-row p {
+  color: var(--text-muted);
+  font-size: .9rem;
+  line-height: 1.85;
+  margin: 0;
+  line-break: strict;
+  text-wrap: pretty;
+}
+
+.decision-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  column-gap: 54px;
+  margin-top: 42px;
+  border-top: 1px solid var(--border-strong);
+}
+.decision-item {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 18px;
+  padding: 28px 0 30px;
+  border-bottom: 1px solid var(--border);
+}
+.decision-num {
+  font-family: var(--font-mono);
+  color: var(--red);
+  font-size: .76rem;
+  letter-spacing: .08em;
+  padding-top: 4px;
+}
+.decision-item h3 {
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  line-break: strict;
+  text-wrap: balance;
+}
+.decision-item p {
   color: var(--text-muted);
   font-size: .88rem;
+  line-height: 1.8;
   margin: 0;
-  line-height: 1.75;
+}
+
+.application-list {
+  margin-top: 42px;
+  border-top: 1px solid var(--border-strong);
+}
+.application-row {
+  display: grid;
+  grid-template-columns: 90px 220px 1fr;
+  gap: 30px;
+  padding: 25px 0 27px;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.application-code {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  padding-top: 4px;
+}
+.application-row h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.55;
+  margin: 0;
+}
+.application-row p {
+  color: var(--text-muted);
+  font-size: .9rem;
+  line-height: 1.85;
+  margin: 0;
 }
 
 /* ─── Solution ─── */
@@ -429,6 +443,41 @@ section { padding: clamp(80px, 10vw, 120px) 0; }
 }
 .ours .compare-result { background: var(--red-bg); color: var(--red); }
 .theirs .compare-result { background: var(--surface); color: var(--text-dim); }
+
+
+/* ─── Liquid-to-Action platform ─── */
+.platform-section { background: #11131b; color: #fff; }
+.platform-section .section-label { color: rgba(255,255,255,.48); }
+.platform-section .section-title { color: #fff; max-width: 760px; }
+.platform-section .section-desc { color: rgba(255,255,255,.58); max-width: 760px; }
+.platform-flow {
+  margin-top: 54px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  border-top: 1px solid rgba(255,255,255,.16);
+  border-bottom: 1px solid rgba(255,255,255,.16);
+}
+.platform-stage {
+  min-height: 230px;
+  padding: 28px 26px 30px 0;
+  position: relative;
+}
+.platform-stage + .platform-stage {
+  border-left: 1px solid rgba(255,255,255,.12);
+  padding-left: 26px;
+}
+.platform-kicker {
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.42);
+  margin-bottom: 20px;
+}
+.platform-stage h3 { font-size: 1.05rem; margin-bottom: 10px; font-weight: 700; color: #fff; }
+.platform-stage p { color: rgba(255,255,255,.58); font-size: .86rem; line-height: 1.8; }
+.platform-signal { font-family: var(--font-mono); font-size: .72rem; color: rgba(255,255,255,.72); margin-top: 22px; line-height: 1.9; }
+.platform-action { margin-top: 22px; display: inline-block; padding: 7px 11px; border: 1px solid rgba(254,8,8,.5); color: #ff6b6b; font-size: .76rem; font-weight: 700; letter-spacing: .02em; }
+.platform-note { margin-top: 24px; color: rgba(255,255,255,.46); font-size: .78rem; line-height: 1.75; }
 
 /* ─── Technology ─── */
 .tech-section { background: var(--bg); }
@@ -686,8 +735,15 @@ footer {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .hero-photo { order: -1; }
   .hero-photo-inner { max-width: 260px; }
-  .problem-grid, .steps, .tech-grid, .awards-grid, .decision-grid, .application-grid { grid-template-columns: 1fr; }
-  .problem-card h3, .decision-card h3, .application-card h3 { white-space: normal; }
+  .steps, .tech-grid, .awards-grid { grid-template-columns: 1fr; }
+  .editorial-row { grid-template-columns: 52px 1fr; gap: 14px 18px; }
+  .editorial-row p { grid-column: 2; }
+  .decision-list { grid-template-columns: 1fr; column-gap: 0; }
+  .application-row { grid-template-columns: 58px 1fr; gap: 12px 18px; }
+  .application-row p { grid-column: 2; }
+  .platform-flow { grid-template-columns: 1fr 1fr; }
+  .platform-stage:nth-child(3) { border-left: 0; border-top: 1px solid rgba(255,255,255,.12); padding-left: 0; }
+  .platform-stage:nth-child(4) { border-top: 1px solid rgba(255,255,255,.12); }
   .comparison-visual { grid-template-columns: 1fr; }
   .traction-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -695,6 +751,163 @@ footer {
   .use-case-card { grid-template-columns: auto 1fr; gap: 8px; }
   .uc-arrow { display: none; }
   .uc-action { grid-column: 1 / -1; }
+}
+
+
+
+/* ─── Business Impact ─── */
+.impact-section {
+  background: #fff;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.impact-section .section-title { max-width: 900px; }
+.impact-section .section-desc { max-width: 780px; }
+.impact-timeline {
+  margin-top: 54px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: relative;
+  border-top: 2px solid #c9c9d1;
+}
+.impact-stage {
+  position: relative;
+  padding: 32px 34px 30px 0;
+  min-height: 210px;
+}
+.impact-stage:not(:last-child) { border-right: 1px solid var(--border-strong); }
+.impact-stage:not(:first-child) { padding-left: 34px; }
+.impact-stage::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--text-muted);
+}
+.impact-stage:nth-child(2)::before { left: 34px; border-color: #b45386; }
+.impact-stage:nth-child(3)::before { left: 34px; border-color: var(--red); }
+.impact-stage .impact-phase {
+  font-family: var(--font-mono);
+  font-size: .64rem;
+  letter-spacing: .12em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.impact-stage h3 {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+.impact-stage p {
+  color: var(--text-muted);
+  font-size: .88rem;
+  line-height: 1.8;
+  max-width: 320px;
+}
+.impact-scale {
+  margin-top: 22px;
+}
+.impact-scale-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: .72rem;
+  color: var(--text-muted);
+}
+.impact-scale-label strong {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+.impact-scale-track {
+  height: 7px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.impact-scale-fill {
+  height: 100%;
+  background: var(--text-muted);
+}
+.impact-stage:nth-child(1) .impact-scale-fill { width: 28%; }
+.impact-stage:nth-child(2) .impact-scale-fill { width: 58%; background: #b45386; }
+.impact-stage:nth-child(3) .impact-scale-fill { width: 100%; background: var(--red); }
+.impact-message {
+  margin: 26px 0 0;
+  padding: 26px 0;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 32px;
+}
+.impact-message span {
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.impact-message strong {
+  font-size: clamp(1.25rem, 2.4vw, 1.9rem);
+  line-height: 1.45;
+  font-weight: 900;
+  text-align: right;
+}
+.impact-message strong em { color: var(--red); font-style: normal; }
+.impact-example {
+  margin-top: 30px;
+  padding: 24px 0 4px;
+  border-top: 3px solid var(--red);
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+}
+.impact-example-label {
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .12em;
+  color: var(--red);
+  font-weight: 700;
+}
+.impact-example-main {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+.impact-example-main strong {
+  color: var(--text);
+  font-size: 1.16rem;
+}
+.impact-example-main .annual {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--red);
+}
+.impact-disclaimer {
+  grid-column: 2;
+  margin-top: -4px;
+  color: var(--text-dim);
+  font-size: .72rem;
+  line-height: 1.7;
+}
+@media (max-width: 800px) {
+  .impact-timeline { grid-template-columns: 1fr; border-top: none; }
+  .impact-stage { padding: 26px 0 26px 30px !important; border-top: 1px solid var(--border-strong); border-right: none !important; min-height: 0; }
+  .impact-stage::before, .impact-stage:nth-child(2)::before, .impact-stage:nth-child(3)::before { left: 0; top: 30px; }
+  .impact-message { display: block; }
+  .impact-message strong { display: block; text-align: left; margin-top: 10px; }
+  .impact-example { grid-template-columns: 1fr; gap: 10px; }
+  .impact-disclaimer { grid-column: 1; }
 }
 
 /* ═══ EIS Section ═══ */
@@ -768,6 +981,10 @@ footer {
 .news-detail-text a { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(54,114,248,0.3); }
 .news-detail-text a:hover { border-color: var(--blue); }
 @media (max-width: 600px) {
+  .platform-flow { grid-template-columns: 1fr; }
+  .platform-stage + .platform-stage { border-left: 0; border-top: 1px solid rgba(255,255,255,.12); padding-left: 0; }
+  .editorial-row { grid-template-columns: 42px 1fr; }
+  .application-row { grid-template-columns: 44px 1fr; }
   .news-item { flex-wrap: wrap; gap: 6px 12px; }
   .news-date { min-width: auto; }
   .news-detail-photos { grid-template-columns: 1fr; }
@@ -836,7 +1053,7 @@ footer {
   <div class="container">
     <div class="section-label">Achievements</div>
     <div class="section-title">外部評価・受賞歴</div>
-    <p class="section-desc">DigiTasteはフードテック領域から研究開発を始めました。そこで得た技術・知見・外部評価を基盤に、現在は液体品質センシングを幅広い産業へ展開しています。</p>
+    <p class="section-desc">研究開発と事業化の両面で、技術コンテスト・学会・アクセラレーションプログラム等から外部評価を受けています。</p>
     <div class="awards-grid">
       <a class="award-card" href="https://techplanter.lne.st/2024/10/07/foodtech_grandprix2024/" target="_blank" rel="noopener">
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/719389_350846.png" alt="FoodTechグランプリ2024" style="width:100%;border-radius:8px;margin-bottom:12px">
@@ -846,22 +1063,20 @@ footer {
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/716660_620963.jpeg" alt="IEEE GCCE 2024" style="width:100%;border-radius:8px;margin-bottom:12px">
         <div class="award-year">2024.10</div><h3>IEEE GCCE 2024</h3><div class="award-detail">Excellent Demo Silver Prize</div>
       </a>
-      <a class="award-card" href="https://unlocx.tech/sksj2024/" target="_blank" rel="noopener">
-        <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/282152_697441.jpeg" alt="SKS Japan 2024" style="width:100%;border-radius:8px;margin-bottom:12px">
-        <div class="award-year">2024.10</div><h3>SKS Japan 2024</h3><div class="award-detail">招待出展</div>
-      </a>
       <a class="award-card" href="https://unlocx.tech/event-20250401/" target="_blank" rel="noopener">
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/608035_736333.jpeg" alt="Foodtech Venture Day NEO" style="width:100%;border-radius:8px;margin-bottom:12px">
         <div class="award-year">2025.03</div><h3>Foodtech Venture Day NEO</h3><div class="award-detail">ベースフード賞</div>
       </a>
       <a class="award-card" href="https://www.ipa.go.jp/jinzai/mitou/advanced/2025first/gaiyou-sd-1.html" target="_blank" rel="noopener">
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/602160_462007.png" alt="未踏アドバンスト 2025" style="width:100%;border-radius:8px;margin-bottom:12px">
-        <div class="award-year">2025</div><h3>IPA 未踏アドバンスト</h3><div class="award-detail">イノベータ認定</div>
+        <div class="award-year">2025</div><h3>IPA 未踏アドバンスト</h3><div class="award-detail">採択</div>
       </a>
-      <div class="award-card">
-        <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/389292_854398.png" alt="FOOMA JAPAN 2025" style="width:100%;border-radius:8px;margin-bottom:12px">
-        <div class="award-year">2025.06</div><h3>FOOMA JAPAN 2025</h3><div class="award-detail">出展</div>
-      </div>
+      <a class="award-card" href="https://www.acceleration-tokyo.metro.tokyo.lg.jp/member_list.php" target="_blank" rel="noopener">
+        <div style="height:160px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background:#f7f7f8;border-radius:8px">
+          <div style="font-family:var(--font-en);font-size:2.6rem;font-weight:700;letter-spacing:.08em;color:var(--text)">ASAC</div>
+        </div>
+        <div class="award-year">2026.06</div><h3>ASAC シードプログラム</h3><div class="award-detail">第22期 採択</div>
+      </a>
     </div>
   </div>
 </section>
@@ -873,19 +1088,66 @@ footer {
     <div class="section-label">The Problem</div>
     <div class="section-title">液体品質管理には、現場判断のギャップがある。</div>
     <p class="section-desc">ラボ分析は高精度、簡易センサーは手軽。その間にある「複合的な状態を、その場で判断したい」というニーズに応える選択肢は限られています。</p>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <div class="card-heading"><div class="problem-icon">🔬</div><h3>高精度だが、現場運用が重い</h3></div>
-        <p>成分分析や外注検査は詳細な情報を得られる一方、設備・時間・専門知識が必要になり、日常の全数・高頻度チェックには使いにくい場合があります。</p>
+    <div class="editorial-list">
+      <div class="editorial-row"><div class="editorial-index">01</div><h3>高精度だが、現場運用が重い</h3><p>成分分析や外注検査は詳細な情報を得られる一方、設備・時間・専門知識が必要になり、日常の全数・高頻度チェックには使いにくい場合があります。</p></div>
+      <div class="editorial-row"><div class="editorial-index">02</div><h3>手軽だが、単一指標では足りない</h3><p>pH、Brix、導電率などは重要な指標ですが、複数要因が絡む品質変化を一つの数値だけで捉えることは困難です。</p></div>
+      <div class="editorial-row"><div class="editorial-index">03</div><h3>最後の判断が人に残る</h3><p>測定値があっても、「使用を続けるか」「交換するか」「再調整するか」の判断が経験者に依存し、品質管理が属人化します。</p></div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ═══ BUSINESS IMPACT ═══ -->
+<section class="impact-section" id="impact">
+  <div class="container">
+    <div class="section-label">Business Impact</div>
+    <div class="section-title">品質異常は、見つけるタイミングが遅いほど影響が広がる。</div>
+    <p class="section-desc">品質問題は、異常そのものだけがコストではありません。検出が遅れるほど、廃棄・再加工に加えて、物流・回収・顧客対応などへ影響範囲が広がります。DigiTasteは、状態変化をできるだけ工程内で捉え、判断を早めることを目指します。</p>
+
+    <div class="impact-timeline">
+      <div class="impact-stage">
+        <div class="impact-phase">01 / PREVENT</div>
+        <h3>予防・監視</h3>
+        <p>基準状態を継続的に確認し、変化が小さい段階で気づける状態をつくります。</p>
+        <div class="impact-scale">
+          <div class="impact-scale-label"><span>影響範囲のイメージ</span><strong>小</strong></div>
+          <div class="impact-scale-track"><div class="impact-scale-fill"></div></div>
+        </div>
       </div>
-      <div class="problem-card">
-        <div class="card-heading"><div class="problem-icon">📏</div><h3>手軽だが、単一指標では足りない</h3></div>
-        <p>pH、Brix、導電率などは重要な指標ですが、複数要因が絡む品質変化を一つの数値だけで捉えることは困難です。</p>
+      <div class="impact-stage">
+        <div class="impact-phase">02 / IN PROCESS</div>
+        <h3>工程内で発見</h3>
+        <p>不良や状態変化を市場へ出る前に捉え、再調整・隔離・廃棄など工程内で対応します。</p>
+        <div class="impact-scale">
+          <div class="impact-scale-label"><span>影響範囲のイメージ</span><strong>中</strong></div>
+          <div class="impact-scale-track"><div class="impact-scale-fill"></div></div>
+        </div>
       </div>
-      <div class="problem-card">
-        <div class="card-heading"><div class="problem-icon">🧠</div><h3>最後の判断が人に残る</h3></div>
-        <p>測定値があっても、「使用を続けるか」「交換するか」「再調整するか」の判断が経験者に依存し、品質管理が属人化します。</p>
+      <div class="impact-stage">
+        <div class="impact-phase">03 / AFTER MARKET</div>
+        <h3>市場流出後に発見</h3>
+        <p>出荷後は物流・回収・顧客対応などが加わり、影響が工程の外へ広がります。</p>
+        <div class="impact-scale">
+          <div class="impact-scale-label"><span>影響範囲のイメージ</span><strong>大</strong></div>
+          <div class="impact-scale-track"><div class="impact-scale-fill"></div></div>
+        </div>
       </div>
+    </div>
+
+    <div class="impact-message">
+      <span>OUR TARGET</span>
+      <strong>工程内で変化を捉え、<em>市場流出を防ぐ。</em></strong>
+    </div>
+
+    <div class="impact-example">
+      <div class="impact-example-label">WHY EARLY DETECTION</div>
+      <div class="impact-example-main">
+        <strong>検出が遅れるほど、対応する範囲と関係者が増えていきます。</strong><br>
+        工程内で完結する再調整・隔離・廃棄から、出荷後の物流・回収・顧客対応へ。早い段階で判断できることが、品質コストを抑える余地につながります。
+        <span class="annual">価値は「測定できること」ではなく、損失が大きくなる前に判断できること。</span>
+      </div>
+      <p class="impact-disclaimer">図中の「小・中・大」は、検出タイミングによって影響範囲が広がる考え方を示した概念図です。実際の影響や削減効果は、製品・工程・発生頻度・対応内容によって異なります。</p>
     </div>
   </div>
 </section>
@@ -925,6 +1187,22 @@ footer {
   </div>
 </section>
 
+<!-- ═══ PLATFORM VALUE ═══ -->
+<section class="platform-section" id="platform">
+  <div class="container">
+    <div class="section-label">Liquid-to-Action</div>
+    <div class="section-title">センサーで終わらない。液体の変化を、現場の判断へ。</div>
+    <p class="section-desc">DigiTasteが提供するのは測定デバイス単体ではありません。センシング、解析、状態判定、推奨アクションまでを一つの流れとして設計します。</p>
+    <div class="platform-flow">
+      <div class="platform-stage"><div class="platform-kicker">01 / SENSE</div><h3>液体を測る</h3><p>対象液体に合わせた条件で、複数周波数の電気インピーダンス特性を取得します。</p><div class="platform-signal">1 kHz<br>5 kHz<br>10 kHz<br>20 kHz …</div></div>
+      <div class="platform-stage"><div class="platform-kicker">02 / ANALYZE</div><h3>特徴を解析する</h3><p>周波数ごとの応答を多次元データとして扱い、基準との差や状態変化を解析します。</p><div class="platform-signal">Re(Z) / Im(Z)<br>|Z| / phase<br>PCA / ML</div></div>
+      <div class="platform-stage"><div class="platform-kicker">03 / DECIDE</div><h3>状態を判定する</h3><p>解析結果を現場で理解できる状態に変換します。評価軸は用途ごとに設計します。</p><div class="platform-signal">GOOD<br>CHECK<br>CHANGE</div></div>
+      <div class="platform-stage"><div class="platform-kicker">04 / ACT</div><h3>次の行動を示す</h3><p>測定値そのものではなく、「継続使用」「確認」「交換」など、次に必要な判断につなげます。</p><div class="platform-action">Recommended Action</div></div>
+    </div>
+    <p class="platform-note">対象液体や品質管理工程によって、測定条件・判定方法・表示するアクションは個別に設計します。</p>
+  </div>
+</section>
+
 <!-- ═══ HOW IT WORKS ═══ -->
 <section class="how-section" id="how">
   <div class="container">
@@ -957,23 +1235,11 @@ footer {
     <div class="section-label">Decision Support</div>
     <div class="section-title">現場で答えたい、4つの問い。</div>
     <p class="section-desc">業界や液体が変わっても、品質管理で繰り返される判断には共通点があります。</p>
-    <div class="decision-grid">
-      <div class="decision-card">
-        <div class="card-heading"><div class="card-icon">📊</div><h3>「いつもと同じか？」</h3></div>
-        <p>ロット差や工程差を比較し、基準状態からのズレを見える化します。</p>
-      </div>
-      <div class="decision-card">
-        <div class="card-heading"><div class="card-icon">⚗️</div><h3>「配合・濃度は合っているか？」</h3></div>
-        <p>希釈や配合条件の違いを捉え、再調整や確認の判断を支援します。</p>
-      </div>
-      <div class="decision-card">
-        <div class="card-heading"><div class="card-icon">🔄</div><h3>「まだ使えるか？」</h3></div>
-        <p>経時変化や使用による状態変化を追跡し、交換・補充タイミングの判断材料にします。</p>
-      </div>
-      <div class="decision-card">
-        <div class="card-heading"><div class="card-icon">⚠️</div><h3>「異常の兆候はないか？」</h3></div>
-        <p>通常パターンから外れた変化を検出し、早期確認につなげます。</p>
-      </div>
+    <div class="decision-list">
+      <div class="decision-item"><div class="decision-num">01</div><div><h3>「いつもと同じか？」</h3><p>ロット差や工程差を比較し、基準状態からのズレを見える化します。</p></div></div>
+      <div class="decision-item"><div class="decision-num">02</div><div><h3>「配合・濃度は合っているか？」</h3><p>希釈や配合条件の違いを捉え、再調整や確認の判断を支援します。</p></div></div>
+      <div class="decision-item"><div class="decision-num">03</div><div><h3>「まだ使えるか？」</h3><p>経時変化や使用による状態変化を追跡し、交換・補充タイミングの判断材料にします。</p></div></div>
+      <div class="decision-item"><div class="decision-num">04</div><div><h3>「異常の兆候はないか？」</h3><p>通常パターンから外れた変化を検出し、早期確認につなげます。</p></div></div>
     </div>
   </div>
 </section>
@@ -984,23 +1250,11 @@ footer {
     <div class="section-label">Applications</div>
     <div class="section-title">液体を扱う、さまざまな産業へ。</div>
     <p class="section-desc">共通のセンシング基盤を用いながら、対象液体に応じて測定条件・電極・評価モデルを設計します。フードテックで培った技術を起点に、現在は幅広い産業の液体品質管理へ展開しています。</p>
-    <div class="application-grid">
-      <div class="application-card">
-        <div class="card-heading"><div class="card-icon">🧪</div><h3>化学・工業</h3></div>
-        <p>塗料、溶剤、薬液などのロット差・配合差・状態変化を捉え、品質確認や調整判断につなげます。</p>
-      </div>
-      <div class="application-card">
-        <div class="card-heading"><div class="card-icon">🏭</div><h3>製造・工程管理</h3></div>
-        <p>洗浄液、工程液、油などの使用状態を追跡し、交換・補充・工程確認のタイミングを支援します。</p>
-      </div>
-      <div class="application-card">
-        <div class="card-heading"><div class="card-icon">🌊</div><h3>水質・環境</h3></div>
-        <p>飼育水や循環水などの状態変化を継続的に捉え、通常時との差や変化の兆候を確認します。</p>
-      </div>
-      <div class="application-card">
-        <div class="card-heading"><div class="card-icon">🥤</div><h3>食品・飲料</h3></div>
-        <p>飲料、調味液、スープ、原液などを比較し、再現性確認や希釈・調整の判断につなげます。</p>
-      </div>
+    <div class="application-list">
+      <div class="application-row"><div class="application-code">A01</div><h3>化学・工業</h3><p>塗料、溶剤、薬液などのロット差・配合差・状態変化を捉え、品質確認や調整判断につなげます。</p></div>
+      <div class="application-row"><div class="application-code">A02</div><h3>製造・工程管理</h3><p>洗浄液、工程液、油などの使用状態を追跡し、交換・補充・工程確認のタイミングを支援します。</p></div>
+      <div class="application-row"><div class="application-code">A03</div><h3>水質・環境</h3><p>飼育水や循環水などの状態変化を継続的に捉え、通常時との差や変化の兆候を確認します。</p></div>
+      <div class="application-row"><div class="application-code">A04</div><h3>食品・飲料</h3><p>飲料、調味液、スープ、原液などを比較し、再現性確認や希釈・調整の判断につなげます。</p></div>
     </div>
     <p style="text-align:center;color:var(--text-muted);font-size:.88rem;margin-top:30px">ここにない液体でも構いません。まずは「何を判別したいか」「現在どう管理しているか」をお聞かせください。</p>
   </div>
@@ -1168,6 +1422,7 @@ footer {
           <li><a href="#news">News</a></li>
           <li><a href="#awards">受賞歴</a></li>
           <li><a href="#problem">The Problem</a></li>
+          <li><a href="#impact">Business Impact</a></li>
           <li><a href="#solution">Our Solution</a></li>
           <li><a href="#applications">適用領域</a></li>
           <li><a href="#eis">EIS原理</a></li>
@@ -1180,7 +1435,7 @@ footer {
     </div>
   </div>
 </footer>
-<script src="news.js?v=20260903c"></script>
+<script src="news.js?v=20260903d"></script>
 <script>
 function toggleNewsDetail(el) {
   el.classList.toggle('open');

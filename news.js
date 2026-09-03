@@ -23,8 +23,8 @@ const NEWS_DATA = [
       photos: [],
       body: [
         "東京都が主催するASACスタートアップアクセラレーション（青山スタートアップアクセラレーションセンター）のシードプログラム第22期に採択されました。",
-        "本プログラムでは、専任メンターの伴走のもとで事業計画の磨き込みや顧客開拓を進めます。液体解析プラットフォームの適用領域を食品分野の外へ広げるにあたり、想定顧客の検証と事業モデルの設計を重点的に進めてまいります。",
-        '<a href="https://www.acceleration-tokyo.metro.tokyo.lg.jp/detail.php?keyno=420" target="_blank" rel="noopener">プログラム紹介ページ →</a>'
+        "本プログラムを通じて、事業計画の磨き込みと顧客開拓を進めてまいります。",
+        '<a href="https://www.acceleration-tokyo.metro.tokyo.lg.jp/member_list.php" target="_blank" rel="noopener">第22期受講者紹介 →</a>'
       ]
     }
   },
