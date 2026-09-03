@@ -1,10 +1,11 @@
-# DigiTaste Landing Page
+# DigiTaste website — Liquid Quality Intelligence v2
 
-GitHub Pages でホストされている DigiTaste のランディングページです。
+2026-09-03 revision.
 
-## デプロイ手順
-
-1. このリポジトリを GitHub にプッシュ
-2. Settings → Pages → Source: `main` branch, `/ (root)`
-3. カスタムドメイン: `www.digitaste.co.jp` を設定
-4. DNSで `www.digitaste.co.jp` の CNAME を `<username>.github.io` に向ける
+Changes in v2:
+- News and external achievements moved directly below the hero section.
+- Navigation reordered to match the new page flow.
+- Card icons and titles aligned on one row.
+- Decision Support and Applications cards changed to a 2×2 desktop layout for cleaner Japanese title wrapping.
+- Japanese heading/body wrapping rules refined to avoid awkward line breaks.
+- Unnecessary forced line break removed from the hero supporting copy.

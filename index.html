@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DigiTaste — Liquid-to-Action Platform</title>
+<title>DigiTaste — Liquid Quality Intelligence | Liquid-to-Action</title>
+<meta name="description" content="DigiTasteは、電気インピーダンスと機械学習で液体の状態変化を捉え、品質判定から次のアクションまでつなげる現場向けセンシング基盤です。化学・工業、製造工程、水質・環境、食品・飲料など幅広い液体品質管理に対応します。">
+<meta property="og:title" content="DigiTaste — Liquid-to-Action">
+<meta property="og:description" content="液体の状態を捉え、品質判定から次のアクションへ。業界横断の液体品質センシング基盤。">
+<meta property="og:type" content="website">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -256,12 +260,32 @@ section { padding: clamp(80px, 10vw, 120px) 0; }
   letter-spacing: -0.02em;
   line-height: 1.35;
   margin-bottom: 14px;
+  line-break: strict;
+  text-wrap: balance;
 }
 .section-desc {
   color: var(--text-muted);
   font-size: 0.95rem;
-  max-width: 560px;
+  max-width: 620px;
   line-height: 1.9;
+  line-break: strict;
+  text-wrap: pretty;
+}
+.hero-sub, .problem-card p, .decision-card p, .application-card p, .step p, .news-title {
+  line-break: strict;
+  text-wrap: pretty;
+}
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-width: 0;
+}
+.card-heading h3 {
+  margin: 0;
+  line-height: 1.45;
+  line-break: strict;
 }
 
 /* ─── Problem ─── */
@@ -301,11 +325,48 @@ section { padding: clamp(80px, 10vw, 120px) 0; }
   border-radius: 10px;
   background: var(--red-bg);
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 18px;
+  margin-bottom: 0;
+  flex: 0 0 44px;
   font-size: 1.2rem;
 }
-.problem-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+.problem-card h3 { font-size: 0.95rem; font-weight: 700; margin: 0; white-space: nowrap; }
 .problem-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.8; }
+
+/* ─── Decision / Application cards ─── */
+.decision-grid, .application-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 960px;
+  margin: 40px auto 0;
+}
+.decision-card, .application-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 26px 24px;
+}
+.decision-card { background: var(--bg-warm); }
+.application-card { background: var(--bg); }
+.decision-card .card-icon, .application-card .card-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+}
+.decision-card h3, .application-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.decision-card p, .application-card p {
+  color: var(--text-muted);
+  font-size: .88rem;
+  margin: 0;
+  line-height: 1.75;
+}
 
 /* ─── Solution ─── */
 .solution-section { background: var(--bg-warm); }
@@ -625,7 +686,8 @@ footer {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .hero-photo { order: -1; }
   .hero-photo-inner { max-width: 260px; }
-  .problem-grid, .steps, .tech-grid, .awards-grid { grid-template-columns: 1fr; }
+  .problem-grid, .steps, .tech-grid, .awards-grid, .decision-grid, .application-grid { grid-template-columns: 1fr; }
+  .problem-card h3, .decision-card h3, .application-card h3 { white-space: normal; }
   .comparison-visual { grid-template-columns: 1fr; }
   .traction-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -684,7 +746,7 @@ footer {
   padding: 0 0;
 }
 .news-detail.open {
-  max-height: 600px; opacity: 1;
+  max-height: 1600px; opacity: 1;
   padding: 20px 0 8px;
 }
 .news-detail-body {
@@ -723,11 +785,12 @@ footer {
       <span class="logo-text">株式会社DigiTaste</span>
     </a>
     <div class="nav-links">
+      <a href="#news">News</a>
+      <a href="#awards">受賞歴</a>
       <a href="#problem">Problem</a>
       <a href="#solution">Solution</a>
-      <a href="#awards">受賞歴</a>
+      <a href="#applications">適用領域</a>
       <a href="#eis">EIS原理</a>
-      <a href="#news">News</a>
       <a href="#contact" class="nav-cta">お問い合わせ</a>
     </div>
   </div>
@@ -738,19 +801,19 @@ footer {
   <div class="container">
     <div class="hero-grid">
       <div class="hero-content">
-        <div class="hero-tag">IPA 未踏アドバンスト 2025 採択</div>
+        <div class="hero-tag">LIQUID QUALITY INTELLIGENCE</div>
         <h1><em>Liquid-to-Action</em><br><span style="white-space:nowrap">液体から、次の一手を。</span></h1>
-        <p class="hero-sub">独自の「回路×インピーダンス×機械学習」技術で液体の複雑な状態を10秒で計測。現場の誰もが即座に実行できる具体的なアクションを導き出します。</p>
-        <p style="font-size:.88rem;color:var(--text-muted);margin-top:-8px;margin-bottom:24px;animation:fadeUp 1.2s ease both">まずは、味の再現性と異常検知が求められる飲食・食品現場へ。</p>
+        <p class="hero-sub">DigiTasteは、電気インピーダンスと機械学習で液体の状態変化を短時間で捉え、品質判定から現場のアクションまでつなげるセンシング基盤です。</p>
+        <p style="font-size:.9rem;color:var(--text-secondary);margin-top:-8px;margin-bottom:24px;animation:fadeUp 1.2s ease both;font-weight:500">化学・工業、製造工程、水質・環境、食品・飲料。液体を扱うさまざまな現場のPoCから導入まで。</p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">お問い合わせ</a>
-          <a href="#solution" class="btn-secondary">技術を知る</a>
+          <a href="#contact" class="btn-primary">PoC・活用を相談する</a>
+          <a href="#applications" class="btn-secondary">適用領域を見る</a>
         </div>
       </div>
       <div class="hero-photo">
         <div class="hero-photo-inner">
-          <img src="assets/device.png" alt="DigiTaste Pro — 液体解析AIセンサー" loading="eager">
-          <div class="hero-photo-label">DigiTaste Pro v4.18.0</div>
+          <img src="assets/device.png" alt="DigiTaste — 液体品質センシングデバイス" loading="eager">
+          <div class="hero-photo-label">Liquid Quality Sensing Device</div>
         </div>
       </div>
     </div>
@@ -767,11 +830,13 @@ footer {
   </div>
 </section>
 
+
 <!-- ═══ AWARDS ═══ -->
 <section class="awards-section" id="awards">
   <div class="container">
     <div class="section-label">Achievements</div>
     <div class="section-title">外部評価・受賞歴</div>
+    <p class="section-desc">DigiTasteはフードテック領域から研究開発を始めました。そこで得た技術・知見・外部評価を基盤に、現在は液体品質センシングを幅広い産業へ展開しています。</p>
     <div class="awards-grid">
       <a class="award-card" href="https://techplanter.lne.st/2024/10/07/foodtech_grandprix2024/" target="_blank" rel="noopener">
         <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_1/4867822/719389_350846.png" alt="FoodTechグランプリ2024" style="width:100%;border-radius:8px;margin-bottom:12px">
@@ -801,27 +866,25 @@ footer {
   </div>
 </section>
 
+
 <!-- ═══ PROBLEM ═══ -->
 <section class="problem-section" id="problem">
   <div class="container">
     <div class="section-label">The Problem</div>
-    <div class="section-title">「正確だが使えない」と「手軽だが不十分」の間</div>
-    <p class="section-desc">現場で液体の状態を即座に判定できるデバイスが存在しません。</p>
+    <div class="section-title">液体品質管理には、現場判断のギャップがある。</div>
+    <p class="section-desc">ラボ分析は高精度、簡易センサーは手軽。その間にある「複合的な状態を、その場で判断したい」というニーズに応える選択肢は限られています。</p>
     <div class="problem-grid">
       <div class="problem-card">
-        <div class="problem-icon">🔬</div>
-        <h3>高価なラボ分析機</h3>
-        <p>味覚センサーは大型で専門知識が必要。現場でのリアルタイム運用は困難です。</p>
+        <div class="card-heading"><div class="problem-icon">🔬</div><h3>高精度だが、現場運用が重い</h3></div>
+        <p>成分分析や外注検査は詳細な情報を得られる一方、設備・時間・専門知識が必要になり、日常の全数・高頻度チェックには使いにくい場合があります。</p>
       </div>
       <div class="problem-card">
-        <div class="problem-icon">📏</div>
-        <h3>安価だが不十分なセンサー</h3>
-        <p>pH計・Brix計は安価ですが単一成分のみ。素性が似た異なる液体を「同じ」と判定してしまいます。</p>
+        <div class="card-heading"><div class="problem-icon">📏</div><h3>手軽だが、単一指標では足りない</h3></div>
+        <p>pH、Brix、導電率などは重要な指標ですが、複数要因が絡む品質変化を一つの数値だけで捉えることは困難です。</p>
       </div>
       <div class="problem-card">
-        <div class="problem-icon">🧠</div>
-        <h3>人間の判断に依存</h3>
-        <p>数値データから「次に何をすべきか」の判断は人間任せ。迷い・解釈の属人化が品質のばらつきを生みます。</p>
+        <div class="card-heading"><div class="problem-icon">🧠</div><h3>最後の判断が人に残る</h3></div>
+        <p>測定値があっても、「使用を続けるか」「交換するか」「再調整するか」の判断が経験者に依存し、品質管理が属人化します。</p>
       </div>
     </div>
   </div>
@@ -830,33 +893,32 @@ footer {
 <!-- ═══ SOLUTION ═══ -->
 <section class="solution-section" id="solution">
   <div class="container">
-    <div class="section-label">Our Solution</div>
-    <div class="section-title">「量」ではなく「状態」を観る。</div>
-    <p class="section-desc">DigiTasteは、単一成分の絶対値ではなく、液体の複合的な「状態」を電気的特徴のパターンとして捕捉し、具体的なアクションまで導出します。</p>
+    <div class="section-label">Our Technology</div>
+    <div class="section-title">液体の「状態」を捉え、判断までつなぐ。</div>
+    <p class="section-desc">DigiTasteは、センサー単体ではなく、測定・解析・判定ロジックを一体で設計します。液体の電気的特徴を多次元パターンとして捉え、現場で使える判定へ変換します。</p>
     <div class="solution-content">
       <div class="solution-text">
-        <h3>現場完結型のAIセンサー</h3>
-        <p>EIS（電気化学インピーダンス分光法）と機械学習を組み合わせ、「今の液体は理想と比べてどうか？」という現場の本質的な問いに答えます。</p>
+        <h3>Liquid-to-Action Platform</h3>
+        <p>EIS（電気インピーダンス分光法）と機械学習を組み合わせ、基準状態との違い、ロットや条件による差、経時変化などを評価します。対象液体と課題に合わせて測定条件・評価モデル・表示するアクションを設計します。</p>
         <ul class="solution-features">
-          <li><span class="feature-check">✓</span><span>4電極EISで液体の電気的特徴を多次元スペクトルとして取得</span></li>
-          <li><span class="feature-check">✓</span><span>機械学習で「理想」との類似度を即時判定</span></li>
-          <li><span class="feature-check">✓</span><span>「水を100ml追加」等の改善アクションを自動提示</span></li>
-          <li><span class="feature-check">✓</span><span>試薬レス・前処理不要・現場に持ち込める小型設計</span></li>
-
+          <li><span class="feature-check">✓</span><span>4電極EISで複数周波数の電気的特徴を取得</span></li>
+          <li><span class="feature-check">✓</span><span>可視化・分類・回帰・異常検知など、課題に応じた解析</span></li>
+          <li><span class="feature-check">✓</span><span>「良好」「要確認」「交換推奨」など、現場の判断に変換</span></li>
+          <li><span class="feature-check">✓</span><span>小型デバイスとWeb画面を組み合わせ、測定から記録まで一体化</span></li>
         </ul>
       </div>
       <div class="comparison-visual">
         <div class="compare-card ours">
-          <span class="compare-badge">DIGITASTE — 相対評価</span>
-          <h4>複合的な「状態」をパターン比較</h4>
-          <p>多次元の周波数特性で液体の状態パターンを捉えます。味覚品質に影響を与える複合的な状態を一括評価します。</p>
-          <div class="compare-result">→ 「いつもの味と同じか／ズレているか」がわかる</div>
+          <span class="compare-badge">DIGITASTE — 状態パターン</span>
+          <h4>複数周波数から、液体全体の変化を捉える</h4>
+          <p>周波数ごとの電気的応答をまとめて扱い、基準状態や既知の状態との違いをパターンとして評価します。</p>
+          <div class="compare-result">→ 「いつもの状態と同じか／どう変化したか」を判断材料にする</div>
         </div>
         <div class="compare-card theirs">
-          <span class="compare-badge">従来センサー — 絶対評価</span>
-          <h4>単一成分の「量」を計測</h4>
-          <p>1次元のスカラー値（塩分・pH等）で計測。数値は出るが、複合的なバランス評価や改善指示には繋がりません。</p>
-          <div class="compare-result">→ 「何がどれくらい入っているか」しかわからない</div>
+          <span class="compare-badge">一般的な簡易センサー — 個別指標</span>
+          <h4>特定の指標を、明確な数値として測る</h4>
+          <p>pH、Brix、導電率などは個別指標の管理に有効です。一方、複数要因が同時に変化する場合は、複数の測定値を人が統合して判断する必要があります。</p>
+          <div class="compare-result">→ DigiTasteは既存指標を置き換えるのではなく、複合状態の判断を補完</div>
         </div>
       </div>
     </div>
@@ -867,66 +929,118 @@ footer {
 <section class="how-section" id="how">
   <div class="container">
     <div class="section-label">How It Works</div>
-    <div class="section-title">3ステップで、液体を可視化。</div>
-    <p class="section-desc">専門知識不要で、現場の誰でも使える液体解析。</p>
+    <div class="section-title">測る。比べる。判断する。</div>
+    <p class="section-desc">複雑な解析を現場に持ち込まず、必要な判断だけをわかりやすく返します。</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
-        <h3>理想状態を設定</h3>
-        <p>「理想の状態」のサンプルをセンサーで測定し、基準として登録します。テンプレートとして再利用できます。</p>
+        <h3>基準をつくる</h3>
+        <p>正常品、良好状態、各ロットなど、現場で区別したい状態を測定し、判定の基準データを構築します。</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h3>液体を測る</h3>
-        <p>対象の液体にセンサーを浸すだけ。多周波数のインピーダンスデータを約10秒で取得します。</p>
+        <h3>現場で測る</h3>
+        <p>対象液体を測定し、複数周波数のインピーダンス特性を短時間で取得。測定履歴も記録します。</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
-        <h3>次の一手を受け取る</h3>
-        <p>AIが類似度を分析し、「タンクを交換」「水を追加」等の具体的な次の一手をリアルタイムで表示します。</p>
+        <h3>判断につなげる</h3>
+        <p>解析結果を状態判定や推奨アクションへ変換し、担当者が次に取るべき行動を明確にします。</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ═══ TARGET USE CASES ═══ -->
-<section style="padding:clamp(60px,8vw,100px) 0;background:var(--bg)">
+<section id="decision" style="padding:clamp(60px,8vw,100px) 0;background:var(--bg)">
   <div class="container">
-    <div class="section-label">Target</div>
-    <div class="section-title">対象とする課題</div>
-    <p class="section-desc">DigiTasteは、液体の状態をその場で捉え、現場で次の一手につなげることを目指しています。</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:960px;margin:0 auto">
-      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
-        <div style="font-size:1.8rem;margin-bottom:12px">📊</div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">味のばらつきの把握</h3>
-        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">調味液やスープの状態を数値化し、味の再現性を見える化します。</p>
+    <div class="section-label">Decision Support</div>
+    <div class="section-title">現場で答えたい、4つの問い。</div>
+    <p class="section-desc">業界や液体が変わっても、品質管理で繰り返される判断には共通点があります。</p>
+    <div class="decision-grid">
+      <div class="decision-card">
+        <div class="card-heading"><div class="card-icon">📊</div><h3>「いつもと同じか？」</h3></div>
+        <p>ロット差や工程差を比較し、基準状態からのズレを見える化します。</p>
       </div>
-      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
-        <div style="font-size:1.8rem;margin-bottom:12px">💧</div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">希釈・補正の判断支援</h3>
-        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">原液の濃度ズレを即座に検知し、補正量の判断を支援します。</p>
+      <div class="decision-card">
+        <div class="card-heading"><div class="card-icon">⚗️</div><h3>「配合・濃度は合っているか？」</h3></div>
+        <p>希釈や配合条件の違いを捉え、再調整や確認の判断を支援します。</p>
       </div>
-      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
-        <div style="font-size:1.8rem;margin-bottom:12px">🔄</div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">洗浄・交換タイミング</h3>
-        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">油やスープの劣化状態を捉え、交換判断の根拠を提供します。</p>
+      <div class="decision-card">
+        <div class="card-heading"><div class="card-icon">🔄</div><h3>「まだ使えるか？」</h3></div>
+        <p>経時変化や使用による状態変化を追跡し、交換・補充タイミングの判断材料にします。</p>
       </div>
-      <div style="background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:28px 24px">
-        <div style="font-size:1.8rem;margin-bottom:12px">⚠️</div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px">異常状態の早期検知</h3>
-        <p style="color:var(--text-muted);font-size:.88rem;margin:0;line-height:1.7">通常とは異なるパターンを検出し、異常の兆候をいち早く知らせます。</p>
+      <div class="decision-card">
+        <div class="card-heading"><div class="card-icon">⚠️</div><h3>「異常の兆候はないか？」</h3></div>
+        <p>通常パターンから外れた変化を検出し、早期確認につなげます。</p>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══ APPLICATIONS ═══ -->
+<section id="applications" style="padding:clamp(60px,8vw,100px) 0;background:var(--bg-warm)">
+  <div class="container">
+    <div class="section-label">Applications</div>
+    <div class="section-title">液体を扱う、さまざまな産業へ。</div>
+    <p class="section-desc">共通のセンシング基盤を用いながら、対象液体に応じて測定条件・電極・評価モデルを設計します。フードテックで培った技術を起点に、現在は幅広い産業の液体品質管理へ展開しています。</p>
+    <div class="application-grid">
+      <div class="application-card">
+        <div class="card-heading"><div class="card-icon">🧪</div><h3>化学・工業</h3></div>
+        <p>塗料、溶剤、薬液などのロット差・配合差・状態変化を捉え、品質確認や調整判断につなげます。</p>
+      </div>
+      <div class="application-card">
+        <div class="card-heading"><div class="card-icon">🏭</div><h3>製造・工程管理</h3></div>
+        <p>洗浄液、工程液、油などの使用状態を追跡し、交換・補充・工程確認のタイミングを支援します。</p>
+      </div>
+      <div class="application-card">
+        <div class="card-heading"><div class="card-icon">🌊</div><h3>水質・環境</h3></div>
+        <p>飼育水や循環水などの状態変化を継続的に捉え、通常時との差や変化の兆候を確認します。</p>
+      </div>
+      <div class="application-card">
+        <div class="card-heading"><div class="card-icon">🥤</div><h3>食品・飲料</h3></div>
+        <p>飲料、調味液、スープ、原液などを比較し、再現性確認や希釈・調整の判断につなげます。</p>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--text-muted);font-size:.88rem;margin-top:30px">ここにない液体でも構いません。まずは「何を判別したいか」「現在どう管理しているか」をお聞かせください。</p>
+  </div>
+</section>
+
+<!-- ═══ POC ═══ -->
+<section id="poc" style="padding:clamp(70px,9vw,110px) 0;background:var(--bg)">
+  <div class="container">
+    <div class="section-label">Proof of Concept</div>
+    <div class="section-title">まずは、対象液体で成立するかを確かめる。</div>
+    <p class="section-desc">液体によって、最適な測定条件や評価軸は異なります。DigiTasteではPoCを通じて、狙った品質差・状態差を捉えられるか、現場の判断に落とし込めるかを段階的に検証します。</p>
+    <div class="steps" style="margin-bottom:38px">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>課題を定義</h3>
+        <p>正常・異常、ロット差、劣化、配合差など、「何を区別できれば価値があるか」を整理します。</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>測定・検証</h3>
+        <p>複数の試料・条件を測定し、再現性や差の出方を確認。必要に応じて測定条件を調整します。</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>判定方法を設計</h3>
+        <p>可視化・分類・回帰・異常検知などから適切な方法を選び、現場で使う判定やアクションへつなげます。</p>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <a href="#contact" class="btn-primary">対象液体について相談する</a>
+    </div>
+  </div>
+</section>
 
 <!-- ═══ EIS PRINCIPLE ═══ -->
 <section class="eis-section" id="eis">
   <div class="container" style="padding-top:80px;padding-bottom:80px">
     <div class="section-label" style="color:rgba(255,255,255,.5)">Principle — Interactive</div>
     <div class="section-title" style="color:#fff">EIS の原理を体験する</div>
-    <p class="section-desc" style="color:rgba(255,255,255,.55);margin-bottom:48px">液体にごく弱い電気をかけると、なぜ個性が見えるのか——シミュレーションと解説で確かめてください。</p>
+    <p class="section-desc" style="color:rgba(255,255,255,.55);margin-bottom:48px">液体に交流信号を与えると、なぜ状態の違いが電気的な応答として現れるのか——シミュレーションと解説で確かめてください。</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:960px;margin:0 auto">
       <!-- Simulation -->
       <a href="eis-animation.html" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:32px 28px;text-decoration:none;transition:all .3s;display:block">
@@ -950,14 +1064,13 @@ footer {
   </div>
 </section>
 
-
 <!-- ═══ CONTACT FORM ═══ -->
 <section class="cta-section" id="contact">
   <div class="container">
     <div class="cta-inner" style="max-width:680px">
       <div class="section-label">Contact</div>
-      <h2>液体の未来を、<br>一緒に創りませんか？</h2>
-      <p>技術やビジョンにご興味をお持ちの企業様、協業をご検討の方、メディア関係者の方など、お気軽にご連絡ください。</p>
+      <h2>その液体、測れるか。<br>まずは一緒に確かめます。</h2>
+      <p>対象液体、現在の品質管理方法、判別したい状態が分かれば、PoCの設計からご相談いただけます。化学・製造・水質・食品など、業種を限定していません。</p>
 
       <div class="contact-form">
         <div id="formSuccess" style="display:none;text-align:center;padding:48px 0">
@@ -984,6 +1097,7 @@ footer {
             <label for="category">お問い合わせ種別</label>
             <select id="category" name="category">
               <option value="">選択してください</option>
+              <option value="PoC・導入相談">PoC・導入に関するご相談</option>
               <option value="技術・活用相談">技術・活用に関するご相談</option>
               <option value="事業提携">事業提携・協業のご相談</option>
               <option value="取材・メディア">取材・メディア掲載</option>
@@ -993,7 +1107,7 @@ footer {
           </div>
           <div class="form-row">
             <label for="message">メッセージ *</label>
-            <textarea id="message" name="message" required placeholder="ご相談内容、ご質問などをお書きください"></textarea>
+            <textarea id="message" name="message" required placeholder="対象の液体、現在の管理方法、判別したい状態、ご相談内容などをお書きください"></textarea>
           </div>
           <div style="text-align:center">
             <button type="submit" class="form-submit">送信する</button>
@@ -1038,7 +1152,7 @@ footer {
         <a href="#" class="logo">
           <svg height="28" viewBox="0 0 761 652" xmlns="http://www.w3.org/2000/svg"><path fill="#fe0808" d="M408,489c-1.97-13.32-.71-27.05-.96-40.54-.48-26.36-5.98-75.62,5.25-98.67,7.04-14.45,18.56-18.53,29.72-28.28,65.4-57.1,50.33-172.5,3.8-236.83-70.85-97.96-141.71,3.85-156.5,81.13-11.14,58.22-5.97,115,40.67,155.7,13.72,11.97,28.62,16.3,32.36,36.64,5.61,30.51,1.57,81.17.62,113.3-.18,6.17.22,12.39.04,18.55l12.06-1.58c.5-3.39-.98-6.59-1.1-9.88-1.33-36.55,2.11-74.78.08-111.08-1.95-34.88-17.98-37.02-40.06-56.94-38.3-34.57-45.37-86.58-39.97-136,.72-6.6,2.29-13.12,4-19.51,1.86-.21.83,2.1.7,3.2-.7,6.23-2.39,12.49-2.71,18.79l2.99.01c.57-10.91,5.16-22.28,8.99-32.53,10.36-27.72,28.7-61.26,52.11-79.89,14.53-11.57,36.43-13.25,51.39-1.57,10.05,7.85,30.22,33.73,35.74,45.26,3.09,6.44,10.06,20.81,11.84,27.16,2.38,8.51,4.38,31.36,4.99,41.01.73,11.66.23,28.3-1.16,39.92-2.26,18.76-11.24,32.28-17.4,49.6-2.61,7.33-5.67,13.47-10.45,20.54-10.88,16.09-26,25.41-44.63,30.37l-30.39,3.6c17.88,6.5,39.25,2.75,55.67-6.32,34.69-19.18,53.49-63.51,56.31-101.69.63-8.51-.92-17.81.03-26.48,1.81.52,1.92,4.93,2.03,6.46,2.24,32.53-2.04,81.79-28.54,104.54-16.59,14.25-50.72,38.47-73.48,30.48-1.87-.66-12.06-7.37-13.02-2.96-.33,1.5,9.26,8.7,11.19,11.79,5.53,8.85,8.28,25.77,8.85,36.15,1.81,32.69.5,71.27-1.09,104.01-.2,4.16.23,8.39.04,12.54h30Z"/><path fill="#fe0808" d="M344.74,186.24c25.3-4.1,27.08,33.27,4.65,35.69-22.97,2.48-23.83-32.58-4.65-35.69Z"/><path fill="#fe0808" d="M418.76,185.21c20.9-3.07,29.11,32.24,6.68,35.72-23.17,3.6-29.43-32.38-6.68-35.72Z"/><path fill="#fe0808" d="M79,524v80.5c3.49,3.47,9.18.59,13.46.46,13.41-.42,23.75,1.91,36.22-4.78,26.61-14.27,30.37-53.92,3.24-69.6-3.58-2.07-13.67-6.58-17.42-6.58h-35.5Z"/><path fill="#fe0808" d="M183,524h-15l2.17,80.33c1.05,3.17,9.95,1.1,12.83,1.67v-82Z"/><path fill="#fe0808" d="M281,589.5c-.13.92-1.72,5.15-2.5,5.49l-1.48-2.99c-7.91,13.11-29.16,15.64-43.25,13.73-48.18-6.52-46.76-87.67,14.73-82.73,5.36.43,26.51,4.84,26.55,11.49.01,2.32-9.53,8.1-11.71,8.28-1.15.1-7.01-3.36-9.54-4.08-23.68-6.81-45.47,12.13-35.55,36.55,8.64,21.27,28.62,18.02,46.52,11.51,3.22-6.32.28-13.77-7.26-13.77h-16.5v-13h36.5c.54,0,2.22,1.55,3.5,1-.89,8.87,1.2,19.92,0,28.5Z"/><path fill="#fe0808" d="M297.75,523.24c1.54-.26,3.05-.52,4.6-.12l1.5,1.52c.08,8.95.38,17.96.19,26.91-.3,14.15.18,29.89-1.06,43.94-.47,5.28-2.21,14.63-9.41,9.44-2.56-1.84-2.67-14.72-2.62-18.47.2-14.51,1.68-29.42,3.09-43.91,1.21-3.79-2.25-16.19-.05-18.05,1.19-.53,2.46-1.03,3.76-1.25Z"/><path fill="#fe0808" d="M314,524v80l13.01,1.01c-.3-27.41.59-54.75,2-82.01l-15,1Z"/><path fill="#fe0808" d="M405,523h-62l.96,14.54c1.57-.12,4.62,1.46,5.54,1.46h16.5c-.32.98,1,2.17,1,2.5v63c0,2.64,10.15-.29,12.36.37l1.49-1.51,1.14-64.36h18.5c.65,0,3.97-1.57,4.37-2.63l.13-13.37Z"/><path fill="#fe0808" d="M536.66,588.66c5.8-5.55,4.4-11.94-2.67-15.15-9.81-4.46-31.17-6.61-34.52-19.48-4.39-16.86,7.68-29.78,24.04-31.01,5.93-.45,25.11,2.43,28.04,7.99,1.19,2.25-4.33,12.26-6.22,12.89-3.01,1-8.07-4.86-12.06-5.67-7.02-1.43-22.25.85-17.75,10.76,3.09,6.82,36.51,7.79,40.79,24.2,3.36,12.88-4.07,24.8-15.62,30.01-11.93,5.38-29.52,3.7-40.02-4.37-3.73-2.86-6.15-4.13-3.11-8.78,7.24-11.06,11.58-3.3,20.17-.28,6.14,2.17,13.63,3.96,18.94-1.11Z"/><polygon fill="#fe0808" points="629 524 629 538 605 539 605 605 589 605 589 539 566 539 566 524 629 524"/><path fill="#fe0808" d="M698,524l-1.05,13.94-41.94,2.07c-.39,1.09.1,2.19.1,2.49v14.5h37l.8,12.74-1.46,2.11-36.35-.85v19h41.5l1.39,1.58-.89,13.42h-54.5l-1.5-1.5v-79.5h56Z"/><path fill="#fe0808" d="M404,605h15.5l7.4-16.38,1.56-.69c7.7,1.39,32.47-2.83,37.03,3.08,2.6,3.38,2.71,11.69,6.1,13.89,4.29,2.78,9.62-.8,14.41.1.29-4.38-1.64-8.45-2.99-12.52-7.44-22.54-18.68-44.66-27.1-66.9-1.84-2.57-17.07-2.45-18.83,0l-33.09,79.41Z"/></svg>
         </a>
-        <p>液体状態から「次の一手」を導き出す、<br>現場完結型解析AIセンサー<br>株式会社DigiTaste</p>
+        <p>液体の状態を捉え、判断につなげる。<br>現場向け液体品質センシング基盤<br>株式会社DigiTaste</p>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
@@ -1051,10 +1165,11 @@ footer {
       <div class="footer-col">
         <h4>Links</h4>
         <ul>
+          <li><a href="#news">News</a></li>
+          <li><a href="#awards">受賞歴</a></li>
           <li><a href="#problem">The Problem</a></li>
           <li><a href="#solution">Our Solution</a></li>
-
-          <li><a href="#awards">受賞歴</a></li>
+          <li><a href="#applications">適用領域</a></li>
           <li><a href="#eis">EIS原理</a></li>
           <li><a href="#contact">お問い合わせ</a></li>
         </ul>
@@ -1065,7 +1180,7 @@ footer {
     </div>
   </div>
 </footer>
-<script src="news.js?v=20260613"></script>
+<script src="news.js?v=20260903c"></script>
 <script>
 function toggleNewsDetail(el) {
   el.classList.toggle('open');
@@ -1091,17 +1206,16 @@ function toggleNewsDetail(el) {
     if (item.detail) {
       const detail = document.createElement('div');
       detail.className = 'news-detail';
-      let photos = '';
+      let photoGrid = '';
       if (item.detail.photos && item.detail.photos.length > 0) {
-        photos = item.detail.photos.map(p =>
+        const photos = item.detail.photos.map(p =>
           '<img src="' + p.src + '" alt="' + (p.alt || '') + '" style="width:100%;border-radius:8px;aspect-ratio:16/10;object-fit:cover;background:var(--surface);border:1px solid var(--border)">'
         ).join('');
-      } else {
-        photos = '<div class="news-photo-placeholder">写真を追加</div><div class="news-photo-placeholder">写真を追加</div>';
+        photoGrid = '<div class="news-detail-photos">' + photos + '</div>';
       }
       detail.innerHTML =
         '<div class="news-detail-body">' +
-          '<div class="news-detail-photos">' + photos + '</div>' +
+          photoGrid +
           '<div class="news-detail-text">' +
             item.detail.body.map(p => '<p>' + p + '</p>').join('') +
           '</div>' +
